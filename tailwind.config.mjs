@@ -9,8 +9,8 @@ export default {
         secondary: 'var(--color-secondary)',
       },
       fontFamily: {
-        heading: ['Montserrat', 'system-ui', 'sans-serif'],
-        body: ['Lato', 'system-ui', 'sans-serif'],
+        heading: ['"Silkscreen"', 'monospace'],
+        body: ['"Pixelify Sans"', 'monospace'],
       },
     },
   },

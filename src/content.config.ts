@@ -1,30 +1,32 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 const blog = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    date: z.date(),
+    date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
-    math: z.boolean().default(false),
     comments: z.boolean().default(true),
     draft: z.boolean().default(false),
   }),
 });
 
 const projects = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    date: z.date(),
+    date: z.coerce.date(),
     img: z.string(),
     alt: z.string(),
     category: z.string(),
-    link: z.string().url(),
+    link: z.string().default(''),
     client: z.string().default('Public'),
     projectDate: z.string(),
+    commits: z.number().default(0),
   }),
 });
 

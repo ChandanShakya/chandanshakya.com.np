@@ -8,4 +8,5 @@ category: "System Configuration"
 link: "https://github.com/ChandanShakya/dotfiles"
 client: "Private"
 projectDate: "September 2022"
+commits: 32
 ---

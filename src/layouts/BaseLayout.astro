@@ -3,6 +3,7 @@ import SEO from '../components/SEO.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import ResumeModal from '../components/ResumeModal.astro';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
@@ -20,21 +21,29 @@ const { title, description, type = 'website' } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/webp" href="/favicon.webp" />
+    <link rel="apple-touch-icon" href="/img/profile.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/montserrat-latin-400.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/montserrat-latin-700.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/lato-latin-400.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/lato-latin-700.woff2" />
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="dns-prefetch" href="https://disqus.com" />
+    <link rel="dns-prefetch" href="https://formspree.io" />
     <SEO title={title} description={description} type={type} />
+    <ClientRouter prefetch />
     <script is:inline>
-      (function() {
+      function applyTheme() {
         try {
           var theme = localStorage.getItem('theme');
-          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === 'dark' || (!theme && prefersDark)) {
             document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
           }
         } catch(e) {}
-      })();
+      }
+      applyTheme();
+      document.addEventListener('astro:page-load', applyTheme);
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
@@ -47,5 +56,24 @@ const { title, description, type = 'website' } = Astro.props;
     </main>
     <Footer />
     <ResumeModal />
+    <script is:inline>
+      function initScrollReveal() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.querySelectorAll('.scroll-reveal').forEach(function(el) { el.classList.add('is-visible'); });
+          return;
+        }
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              observer.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.scroll-reveal').forEach(function(el) { observer.observe(el); });
+      }
+      initScrollReveal();
+      document.addEventListener('astro:page-load', initScrollReveal);
+    </script>
   </body>
 </html>

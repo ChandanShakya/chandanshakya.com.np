@@ -6,29 +6,39 @@ import About from '../components/About.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
 
-const projects = (await getCollection('projects')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+const allProjects = (await getCollection('projects')).sort(
+  (a, b) => (b.data.commits || 0) - (a.data.commits || 0)
 );
+const featured = allProjects.slice(0, 6);
 ---
 
 <BaseLayout>
   <Header />
 
-  <section id="portfolio" class="py-16 px-4">
+  <section id="portfolio" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-heading font-bold text-center mb-12" style="color: var(--color-text)">
-        Portfolio
+      <h2 class="pixel-md sm:pixel-lg font-heading text-center mb-4" style="color: var(--color-text);">
+        ◆ FEATURED QUESTS ◆
       </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
+      <p class="text-center mb-12 text-xl" style="color: var(--color-muted);">
+        Top projects by commit activity
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {featured.map((project) => (
           <PortfolioCard
             title={project.data.title}
             img={project.data.img}
             alt={project.data.alt}
             category={project.data.category}
-            slug={project.id.replace(/\.md$/, '')}
+            slug={project.id}
+            commits={project.data.commits}
           />
         ))}
+      </div>
+      <div class="text-center mt-10">
+        <a href="/projects" class="pixel-btn-outline min-h-[48px] inline-flex items-center" style="text-decoration: none;">
+          VIEW ALL QUESTS →
+        </a>
       </div>
     </div>
   </section>

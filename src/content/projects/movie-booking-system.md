@@ -8,4 +8,5 @@ category: "C, CRUD, CLI"
 link: "https://github.com/ChandanShakya/Movie-Booking-System-with-Seat-Selection"
 client: "Public"
 projectDate: "September 2023"
+commits: 6
 ---

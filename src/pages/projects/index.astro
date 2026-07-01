@@ -5,25 +5,77 @@ import { getCollection } from 'astro:content';
 import { SITE } from '../../lib/constants';
 
 const projects = (await getCollection('projects')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => (b.data.commits || 0) - (a.data.commits || 0)
 );
+
+const categories = [...new Set(
+  projects.map(p => p.data.category.split(',')[0].trim())
+)].sort();
 ---
 
 <BaseLayout title="Projects" description={`Projects by ${SITE.author}`}>
-  <div class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
-    <h1 class="text-3xl sm:text-4xl font-heading font-bold mb-12" style="color: var(--color-text)">
-      Projects
+  <div class="max-w-6xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
+    <h1 class="pixel-md sm:pixel-lg font-heading mb-4" style="color: var(--color-text);">
+      ◆ QUEST LOG ◆
     </h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {projects.map((project) => (
-        <PortfolioCard
-          title={project.data.title}
-          img={project.data.img}
-          alt={project.data.alt}
-          category={project.data.category}
-          slug={project.id.replace(/\.md$/, '')}
-        />
+    <p class="mb-8 text-xl" style="color: var(--color-muted);">
+      {projects.length} quests across {categories.length} categories
+    </p>
+
+    <div class="flex flex-wrap gap-2 sm:gap-3 mb-8" id="filter-tabs">
+      <button data-filter="all" class="filter-tab active">All</button>
+      {categories.map(cat => (
+        <button data-filter={cat} class="filter-tab">{cat}</button>
       ))}
     </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8" id="projects-grid">
+      {projects.map(project => (
+        <div data-categories={project.data.category} class="project-item">
+          <PortfolioCard
+            title={project.data.title}
+            img={project.data.img}
+            alt={project.data.alt}
+            category={project.data.category}
+            slug={project.id}
+            commits={project.data.commits}
+          />
+        </div>
+      ))}
+    </div>
+
+    <p id="no-results" class="hidden text-center py-12 text-xl" style="color: var(--color-muted);">
+      NO QUESTS FOUND IN THIS CATEGORY.
+    </p>
   </div>
+
+  <script is:inline>
+    function initFilters() {
+      var tabs = document.querySelectorAll('.filter-tab');
+      var items = document.querySelectorAll('.project-item');
+      var noResults = document.getElementById('no-results');
+      if (!tabs.length) return;
+
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+
+          var filter = tab.dataset.filter;
+          var visible = 0;
+
+          items.forEach(function(item) {
+            var cats = item.dataset.categories.toLowerCase();
+            var show = filter === 'all' || cats.includes(filter.toLowerCase());
+            item.style.display = show ? '' : 'none';
+            if (show) visible++;
+          });
+
+          noResults.classList.toggle('hidden', visible > 0);
+        });
+      });
+    }
+    initFilters();
+    document.addEventListener('astro:page-load', initFilters);
+  </script>
 </BaseLayout>

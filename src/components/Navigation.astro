@@ -1,15 +1,13 @@
 ---
 import { NAVIGATION } from '../lib/constants';
 import ThemeToggle from './ThemeToggle.astro';
-
-const currentPath = Astro.url.pathname;
 ---
 
-<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b" style="background: var(--color-bg); opacity: 0.95; border-color: var(--color-border)">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+<nav transition:persist class="fixed top-0 left-0 right-0 z-50" style="background: var(--color-bg); border-bottom: 4px solid var(--color-border);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-6">
     <div class="flex items-center justify-between h-16">
-      <a href="/" class="font-heading font-bold text-lg" style="color: var(--color-text)">
-        Chandan Shakya
+      <a href="/" class="pixel-xs sm:pixel-sm font-heading" style="color: var(--color-primary); text-decoration: none;">
+        CHANDAN
       </a>
 
       <!-- Desktop nav -->
@@ -17,12 +15,9 @@ const currentPath = Astro.url.pathname;
         {NAVIGATION.map((item) => (
           <a
             href={item.href}
-            class={`text-sm font-medium transition-colors hover:text-primary ${
-              currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href))
-                ? 'text-primary'
-                : ''
-            }`}
-            style={currentPath !== item.href && !(item.href !== '/' && currentPath.startsWith(item.href)) ? 'color: var(--color-muted)' : ''}
+            data-nav-link={item.href}
+            class="text-xl transition-colors min-h-[44px] flex items-center"
+            style="color: var(--color-muted); text-decoration: none;"
           >
             {item.label}
           </a>
@@ -33,12 +28,8 @@ const currentPath = Astro.url.pathname;
       <!-- Mobile menu button -->
       <div class="sm:hidden flex items-center gap-4">
         <ThemeToggle />
-        <label for="mobile-menu-toggle" class="cursor-pointer p-2" aria-label="Toggle menu">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text)">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
+        <label for="mobile-menu-toggle" class="cursor-pointer p-2 min-h-[44px] flex items-center" aria-label="Toggle menu">
+          <span class="pixel-xs font-heading" style="color: var(--color-text);">MENU</span>
         </label>
       </div>
     </div>
@@ -46,22 +37,36 @@ const currentPath = Astro.url.pathname;
 
   <!-- Mobile menu -->
   <input type="checkbox" id="mobile-menu-toggle" class="hidden peer" />
-  <div class="sm:hidden hidden peer-checked:block" style="background: var(--color-bg); border-bottom: 1px solid var(--color-border)">
-    <div class="px-4 py-3 space-y-2">
+  <div class="sm:hidden hidden peer-checked:block pixel-dialog" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 50;">
+    <div class="py-3 space-y-1">
       {NAVIGATION.map((item) => (
         <a
           href={item.href}
-          class={`block py-2 text-sm font-medium ${
-            currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href))
-              ? 'text-primary'
-              : ''
-          }`}
-          style={currentPath !== item.href && !(item.href !== '/' && currentPath.startsWith(item.href)) ? 'color: var(--color-muted)' : ''}
+          data-nav-link={item.href}
+          class="block py-3 text-xl min-h-[48px] flex items-center"
+          style="color: var(--color-muted); text-decoration: none;"
         >
-          {item.label}
+          {'>'} {item.label}
         </a>
       ))}
     </div>
   </div>
 </nav>
 <div class="h-16"></div>
+
+<script is:inline>
+  function updateNavActive() {
+    var path = window.location.pathname;
+    document.querySelectorAll('[data-nav-link]').forEach(function(link) {
+      var href = link.getAttribute('data-nav-link');
+      var isActive = path === href || (href !== '/' && path.startsWith(href));
+      if (isActive) {
+        link.style.color = 'var(--color-primary)';
+      } else {
+        link.style.color = 'var(--color-muted)';
+      }
+    });
+  }
+  updateNavActive();
+  document.addEventListener('astro:page-load', updateNavActive);
+</script>

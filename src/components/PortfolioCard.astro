@@ -8,30 +8,45 @@ interface Props {
   alt: string;
   category: string;
   slug: string;
+  commits?: number;
 }
 
-const { title, img, alt, category, slug } = Astro.props;
+const { title, img, alt, category, slug, commits = 0 } = Astro.props;
 const portfolioImg = getPortfolioImage(img);
 ---
 
-<a href={`/projects/${slug}`} class="group block rounded-lg overflow-hidden transition-transform hover:scale-[1.02]" style="background: var(--color-surface)">
-  <div class="relative aspect-[900/650] overflow-hidden">
-    <Image
-      src={portfolioImg}
-      alt={alt}
-      width={900}
-      height={650}
-      loading="lazy"
-      class="w-full h-full object-cover transition-transform group-hover:scale-105"
-    />
-    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-      <span class="text-white font-heading font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity">
-        {title}
-      </span>
-    </div>
+<a href={`/projects/${slug}`} class="group block inventory-slot p-0 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]" style="text-decoration: none;">
+  <div class="relative aspect-[900/650] overflow-hidden" style="background: var(--color-surface);">
+    {portfolioImg ? (
+      <Image
+        src={portfolioImg}
+        alt={alt}
+        width={900}
+        height={650}
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover transition-all duration-100 group-hover:brightness-110"
+        style="image-rendering: auto;"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center" style="background: var(--color-bg);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="square" class="opacity-40">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+      </div>
+    )}
   </div>
-  <div class="p-4">
-    <h3 class="font-heading font-bold text-sm mb-1" style="color: var(--color-text)">{title}</h3>
-    <p class="text-xs" style="color: var(--color-muted)">{category}</p>
+  <div class="p-4 sm:p-5">
+    <h3 class="pixel-xs sm:pixel-sm font-heading leading-relaxed mb-2 group-hover:text-primary transition-colors" style="color: var(--color-text);">
+      {title}
+    </h3>
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-base truncate" style="color: var(--color-muted);">{category}</span>
+      {commits > 0 && (
+        <span class="pixel-xs font-heading px-2 py-1 shrink-0" style="background: var(--color-primary); color: white;">
+          ★ {commits.toLocaleString()}
+        </span>
+      )}
+    </div>
   </div>
 </a>

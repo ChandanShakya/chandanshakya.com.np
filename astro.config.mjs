@@ -10,7 +10,7 @@ export default defineConfig({
     sitemap(),
   ],
   image: {
-    quality: 'max',
+    quality: 80,
     format: ['webp'],
   },
   build: {
@@ -18,7 +18,11 @@ export default defineConfig({
   },
   markdown: {
     shikiConfig: {
-      theme: 'github-dark',
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+      wrap: true,
     },
   },
 });

@@ -8,4 +8,5 @@ category: "Bash, Shell, CLI, Curl, Script"
 link: "https://github.com/ChandanShakya/KabirProfileViews"
 client: "Public"
 projectDate: "January 2023"
+commits: 2
 ---

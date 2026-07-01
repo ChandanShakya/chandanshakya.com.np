@@ -1,0 +1,23 @@
+# Chandan Shakya — Portfolio & Blog
+
+> Web Developer, Researcher, and Social Engineer from Kathmandu, Nepal. Linux enthusiast with a decade of tinkering experience.
+
+## About
+Personal portfolio showcasing projects, blog posts, and technical writing. Built with Astro, styled with Stardew Valley-inspired pixel art aesthetic.
+
+## Key Sections
+- [Projects](https://chandanshakya.com.np/projects) — 27 projects across Laravel, Python, Docker, and more
+- [Blog](https://chandanshakya.com.np/blog) — 9 technical articles on Laravel, PHP, MySQL, and web development
+- [Archive](https://chandanshakya.com.np/archive) — Complete timeline of all content
+
+## Contact
+- GitHub: https://github.com/ChandanShakya
+- Twitter: https://twitter.com/ZXY_CC_3ag13
+- LinkedIn: https://linkedin.com/in/ChandanShakya
+- Email: Via contact form at https://chandanshakya.com.np/#contact
+
+## Tech Stack
+Astro 7, Tailwind CSS, Shiki syntax highlighting, Formspree, Disqus comments
+
+## Location
+Kathmandu, Nepal

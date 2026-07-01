@@ -1,6 +1,6 @@
 export const SITE = {
   title: 'Chandan Shakya',
-  description: 'Personal Portfolio Site',
+  description: 'Personal Portfolio and Blog of Chandan Shakya — Web Developer, Researcher, and Social Engineer.',
   author: 'Chandan Shakya',
   siteUrl: 'https://chandanshakya.com.np',
   lang: 'en',
@@ -22,12 +22,6 @@ export const SOCIAL_LINKS = [
   { title: 'LinkedIn', url: 'https://linkedin.com/in/ChandanShakya', icon: 'linkedin' },
   { title: 'Facebook', url: 'https://www.facebook.com/Chandan.UwU', icon: 'facebook' },
 ];
-
-// ponytail: credits and copyright are the same value, one constant
-export const FOOTER = {
-  location: 'Kathmandu, Nepal',
-  name: 'Chandan Shakya',
-};
 
 export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xgeqorqq';
 

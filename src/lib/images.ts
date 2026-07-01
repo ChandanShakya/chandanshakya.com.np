@@ -8,7 +8,8 @@ const profileImage = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
-export function getPortfolioImage(filename: string): ImageMetadata {
+export function getPortfolioImage(filename: string): ImageMetadata | null {
+  if (!filename) return null;
   const mod = portfolioImages[`../assets/portfolio/${filename}`];
   if (!mod) throw new Error(`Image not found: ${filename}`);
   return mod.default;

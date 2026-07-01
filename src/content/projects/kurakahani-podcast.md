@@ -8,4 +8,5 @@ category: "Jekyll, Podcast, RSS, Archiving, Github Pages, Python"
 link: "https://github.com/Kurakahani/kurakahani.github.io"
 client: "Public"
 projectDate: "September 2023"
+commits: 0
 ---

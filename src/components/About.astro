@@ -1,33 +1,99 @@
 ---
 ---
 
-<section id="about" class="py-16 px-4" style="background: var(--color-surface)">
+<section id="about" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal" style="background: var(--color-surface);">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-2xl sm:text-3xl font-heading font-bold text-center mb-12" style="color: var(--color-text)">
-      About
+    <h2 class="pixel-md sm:pixel-lg font-heading text-center mb-12" style="color: var(--color-text);">
+      ◆ CHARACTER STATS ◆
     </h2>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div class="text-center md:text-left">
-        <h3 class="font-heading font-bold text-xl mb-4" style="color: var(--color-text)">About Me</h3>
-        <p class="text-sm leading-relaxed" style="color: var(--color-muted)">
-          I'm a passionate developer with a keen interest in technology. From crafting small programs to exploring cutting-edge projects, I thrive on challenges.
+      <!-- Character Info -->
+      <div class="pixel-dialog">
+        <h3 class="pixel-xs font-heading mb-4" style="color: var(--color-primary);">PLAYER INFO</h3>
+        <p class="text-xl leading-relaxed mb-3" style="color: var(--color-text);">
+          I'm a passionate developer and Linux enthusiast from Kathmandu, Nepal. I've been tinkering with computers for over a decade — from modding old phones to running retro games on whatever hardware I can get my hands on.
         </p>
-        <p class="text-sm leading-relaxed mt-3" style="color: var(--color-muted)">
-          My journey began in childhood, fueled by my fascination with computers introduced by my brother. As an avid gamer and photographer, I've honed my skills by completing college projects, assisting friends, and embracing hands-on experimentation.
+        <p class="text-xl leading-relaxed" style="color: var(--color-muted);">
+          My journey started with my brother's computer, which sparked a lifelong fascination. I'm also an avid gamer and photographer, always experimenting and learning through hands-on projects.
         </p>
       </div>
-      <div class="text-center md:text-left">
-        <h3 class="font-heading font-bold text-xl mb-4" style="color: var(--color-text)">My Tech Journey</h3>
-        <ul class="text-sm space-y-2" style="color: var(--color-muted)">
-          <li>Samsung GT-S102 (GingerIceJelly Mod)</li>
-          <li>Compaq CQ40 (Linux enthusiast for a decade)</li>
-          <li>Acer Nitro 5 (my current Windows 11 powerhouse)</li>
-          <li>Redmi Note 10S (my mobile companion)</li>
-          <li>Canon Powershot sx210 IS (modified with CHDK)</li>
-        </ul>
+
+      <!-- Stats -->
+      <div class="pixel-dialog">
+        <h3 class="pixel-xs font-heading mb-4" style="color: var(--color-primary);">SKILLS</h3>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-base" style="color: var(--color-text);">HTML/CSS</span>
+              <span class="text-base" style="color: var(--color-muted);">LVL 8</span>
+            </div>
+            <div style="height: 20px; background: var(--color-border); box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.3);"><div style="height: 100%; width: 80%; background: var(--color-primary); transition: width 0.6s ease;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-base" style="color: var(--color-text);">PHP/LARAVEL</span>
+              <span class="text-base" style="color: var(--color-muted);">LVL 7</span>
+            </div>
+            <div style="height: 20px; background: var(--color-border); box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.3);"><div style="height: 100%; width: 70%; background: var(--color-primary); transition: width 0.6s ease;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-base" style="color: var(--color-text);">PYTHON</span>
+              <span class="text-base" style="color: var(--color-muted);">LVL 6</span>
+            </div>
+            <div style="height: 20px; background: var(--color-border); box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.3);"><div style="height: 100%; width: 60%; background: var(--color-primary); transition: width 0.6s ease;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-base" style="color: var(--color-text);">LINUX</span>
+              <span class="text-base" style="color: var(--color-muted);">LVL 9</span>
+            </div>
+            <div style="height: 20px; background: var(--color-border); box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.3);"><div style="height: 100%; width: 90%; background: var(--color-primary); transition: width 0.6s ease;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-base" style="color: var(--color-text);">GAMING</span>
+              <span class="text-base" style="color: var(--color-muted);">LVL ∞</span>
+            </div>
+            <div style="height: 20px; background: var(--color-border); box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.3);"><div style="height: 100%; width: 100%; background: var(--color-primary); transition: width 0.6s ease;"></div></div>
+          </div>
+        </div>
       </div>
     </div>
-    <p class="text-center mt-8 text-sm" style="color: var(--color-muted)">
+
+    <!-- Inventory -->
+    <div class="pixel-dialog mt-8">
+      <h3 class="pixel-xs font-heading mb-4" style="color: var(--color-primary);">INVENTORY</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">⌨ ThinkPad X220</span>
+          <span class="block text-sm" style="color: var(--color-muted);">Debian · Daily Driver</span>
+        </div>
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">📱 Samsung S23 Ultra</span>
+          <span class="block text-sm" style="color: var(--color-muted);">512GB</span>
+        </div>
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">🖥 Compaq CQ40</span>
+          <span class="block text-sm" style="color: var(--color-muted);">Batocera · Retro Games</span>
+        </div>
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">🎵 iPhone 4s</span>
+          <span class="block text-sm" style="color: var(--color-muted);">Jailbroken · Music</span>
+        </div>
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">📞 Samsung GT-S102</span>
+          <span class="block text-sm" style="color: var(--color-muted);">GingerIceJelly · Retired</span>
+        </div>
+        <div class="inventory-slot p-4 min-h-[48px]">
+          <span class="text-lg" style="color: var(--color-text);">📷 Canon SX210 IS</span>
+          <span class="block text-sm" style="color: var(--color-muted);">CHDK Modified</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center mt-8 text-xl" style="color: var(--color-muted);">
       Let's connect if you share my enthusiasm for innovation!
     </p>
   </div>

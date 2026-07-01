@@ -5,13 +5,13 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro';
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project) => ({
-    params: { slug: project.id.replace(/\.md$/, '') },
+    params: { slug: project.id },
     props: { project },
   }));
 }
 
 const { project } = Astro.props;
-const { title, description, date, img, alt, category, link, client, projectDate } = project.data;
+const { title, description, date, img, alt, category, link, client, projectDate, commits } = project.data;
 ---
 
 <ProjectLayout
@@ -24,4 +24,5 @@ const { title, description, date, img, alt, category, link, client, projectDate 
   link={link}
   client={client}
   projectDate={projectDate}
+  commits={commits}
 />

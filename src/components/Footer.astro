@@ -1,42 +1,68 @@
 ---
-import { FOOTER, SOCIAL_LINKS } from '../lib/constants';
+import { SITE, SOCIAL_LINKS } from '../lib/constants';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const posts = (await getCollection('blog')).filter(p => !p.data.draft);
 ---
 
-<footer class="py-8 px-4 text-center" style="border-top: 1px solid var(--color-border)">
+<footer class="py-10 sm:py-12 px-5 text-center" style="border-top: 4px solid var(--color-border); background: var(--color-surface);">
   <div class="max-w-6xl mx-auto">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-      <div>
-        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Location</h3>
-        <p class="text-sm" style="color: var(--color-muted)">{FOOTER.location}</p>
+    <div class="pixel-dialog inline-block mb-8">
+      <p class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">
+        ★ QUEST COMPLETE ★
+      </p>
+      <p class="text-xl sm:text-2xl" style="color: var(--color-muted);">
+        Thank you for visiting my farm!
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div class="inventory-slot p-4">
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">LOCATION</h3>
+        <p class="text-xl" style="color: var(--color-text);">Kathmandu, Nepal</p>
       </div>
-      <div>
-        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Social</h3>
-        <div class="flex items-center justify-center gap-3">
+      <div class="inventory-slot p-4">
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">GUILD LINKS</h3>
+        <div class="flex items-center justify-center gap-4 flex-wrap">
           {SOCIAL_LINKS.map((link) => (
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.title}
-              class="text-sm transition-colors hover:text-primary"
-              style="color: var(--color-muted)"
+              class="text-xl transition-colors hover:text-primary min-h-[44px] flex items-center"
+              style="color: var(--color-muted); text-decoration: none;"
             >
               {link.title}
             </a>
           ))}
         </div>
       </div>
-      <div>
-        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Credits</h3>
-        <p class="text-sm" style="color: var(--color-muted)">{FOOTER.name}</p>
+      <div class="inventory-slot p-4">
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">DEVELOPER</h3>
+        <p class="text-xl" style="color: var(--color-text);">{SITE.author}</p>
       </div>
     </div>
-    <div class="text-sm" style="color: var(--color-muted)">
-      <p>Copyright &copy; {FOOTER.name} {new Date().getFullYear()}</p>
-      <div class="mt-2 flex items-center justify-center gap-4">
-        <a href="/rss.xml" class="hover:text-primary transition-colors">RSS</a>
-        <a href="/sitemap-index.xml" class="hover:text-primary transition-colors">Sitemap</a>
+
+    <div class="flex items-center justify-center gap-6 text-xl mb-6 flex-wrap" style="color: var(--color-muted);">
+      <span>★ {projects.length} QUESTS</span>
+      <span>·</span>
+      <span>★ {posts.length} SCROLLS</span>
+      <span>·</span>
+      <span>★ DAY {Math.floor((Date.now() - new Date('2024-01-01').getTime()) / 86400000)}</span>
+    </div>
+
+    <div class="text-xl" style="color: var(--color-muted);">
+      <p>© {SITE.author} {new Date().getFullYear()}</p>
+      <div class="mt-3 flex items-center justify-center gap-4">
+        <a href="/rss.xml" class="hover:text-primary transition-colors min-h-[44px] flex items-center" rel="noopener" style="text-decoration: none;">RSS</a>
+        <span>·</span>
+        <a href="/sitemap-index.xml" class="hover:text-primary transition-colors min-h-[44px] flex items-center" rel="noopener" style="text-decoration: none;">Sitemap</a>
       </div>
+      <p class="mt-4 pixel-xs font-heading" style="color: var(--color-secondary);">
+        TO BE CONTINUED...
+      </p>
     </div>
   </div>
 </footer>

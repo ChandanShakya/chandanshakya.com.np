@@ -8,4 +8,5 @@ category: "Scraping, Web Development, Cron, Python"
 link: "https://github.com/ChandanShakya/goldmandu"
 client: "Private"
 projectDate: "May 2022"
+commits: 2
 ---

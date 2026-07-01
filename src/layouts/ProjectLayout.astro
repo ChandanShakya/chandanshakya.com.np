@@ -15,10 +15,34 @@ interface Props {
   link: string;
   client: string;
   projectDate: string;
+  commits?: number;
 }
 
-const { title, description, date, img, alt, category, link, client, projectDate } = Astro.props;
+const { title, description, date, img, alt, category, link, client, projectDate, commits = 0 } = Astro.props;
 const portfolioImg = getPortfolioImage(img);
+
+const iconPaths: Record<string, { path: string; color: string }> = {
+  laravel: { path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', color: '#FF2D20' },
+  python: { path: 'M12 2C9.24 2 7.47 3.29 7.47 3.29L7.5 6h4.59v1H6.53S3 6.71 3 11.97c0 5.27 2.86 5.07 2.86 5.07h1.69v-2.54s-.09-2.86 2.78-2.86h4.73s2.71 0 2.71-2.63V5.34S18.17 2 12 2zm-2.54 1.73a.9.9 0 110-1.8.9.9 0 010 1.8z', color: '#3776AB' },
+  docker: { path: 'M22 11.5c-.2-.7-.7-1.2-1.3-1.4-.3-2.3-2.2-4-4.5-4h-.3c-.3-.8-1-1.4-1.8-1.6C14 4.7 12.8 4 11.5 4c-.3 0-.6 0-.8.1C10 3.4 8.8 3 7.5 3 5.6 3 4 4.3 3.5 6.1c-.3 0-.6.1-.8.3C1.7 7 .8 8.2.8 9.5c0 .5.1 1 .4 1.4-.1.3-.1.6-.1 1 0 3.3 2.7 6 6 6h8c3.3 0 6-2.7 6-6 0-.9-.2-1.7-.6-2.5z', color: '#2496ED' },
+  shell: { path: 'M4 4h16v16H4V4zm3 4l4 4-4 4M12 16h5', color: '#4EAA25' },
+  web: { path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z', color: '#4285F4' },
+  api: { path: 'M13 3L4 14h7l-2 7 9-11h-7l2-7z', color: '#FF6B35' },
+  security: { path: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.67-3.13 9.06-7 10.18-3.87-1.12-7-5.51-7-10.18V6.18l7-3.18z', color: '#00B4D8' },
+  telegram: { path: 'M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z', color: '#26A5E4' },
+  ai: { path: 'M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2zM9.5 14a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z', color: '#8B5CF6' },
+  ecommerce: { path: 'M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.16 14.26l.04-.12.94-1.7h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0020.01 4H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7.42c-.13 0-.25-.11-.25-.25z', color: '#FF9900' },
+  starter: { path: 'M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z', color: '#10B981' },
+  livewire: { path: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z', color: '#E535AB' },
+  minecraft: { path: 'M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z M12 22V12 M12 12L3 7 M12 12l9-5', color: '#62B847' },
+  scraping: { path: 'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z', color: '#EAB308' },
+  system: { path: 'M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.53a7.76 7.76 0 00.07-1 7.76 7.76 0 00-.07-.97l2.11-1.65a.5.5 0 00.12-.64l-2-3.46a.5.5 0 00-.61-.22l-2.49 1a7.15 7.15 0 00-1.67-.97l-.38-2.65A.49.49 0 0014 2h-4a.49.49 0 00-.49.42l-.38 2.65a7.15 7.15 0 00-1.67.97l-2.49-1a.5.5 0 00-.61.22l-2 3.46a.49.49 0 00.12.64l2.11 1.65a7.93 7.93 0 000 1.94l-2.11 1.65a.5.5 0 00-.12.64l2 3.46a.5.5 0 00.61.22l2.49-1c.52.38 1.08.7 1.67.97l.38 2.65c.05.24.26.42.49.42h4c.24 0 .44-.18.49-.42l.38-2.65a7.15 7.15 0 001.67-.97l2.49 1a.5.5 0 00.61-.22l2-3.46a.49.49 0 00-.12-.64l-2.11-1.65z', color: '#94A3B8' },
+  default: { path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', color: '#18bc9c' },
+};
+
+const catLower = category.toLowerCase();
+const iconKey = Object.keys(iconPaths).find((k) => k !== 'default' && catLower.includes(k)) || 'default';
+const icon = iconPaths[iconKey];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -26,6 +50,8 @@ const jsonLd = {
   name: title,
   description: description,
   dateCreated: date.toISOString(),
+  image: portfolioImg ? `${SITE.siteUrl}/img/portfolio/${img}` : `${SITE.siteUrl}/img/profile.webp`,
+  applicationCategory: category,
   author: {
     '@type': 'Person',
     name: SITE.author,
@@ -37,43 +63,54 @@ const jsonLd = {
 
 <BaseLayout title={`${title} | ${SITE.title}`} description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <article class="max-w-4xl mx-auto px-4 py-12 sm:py-16">
+  <article class="max-w-4xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
     <header class="mb-8">
-      <a href="/projects" class="text-primary hover:underline text-sm font-medium">&larr; Back to Projects</a>
-      <h1 class="text-3xl sm:text-4xl font-heading font-bold mt-4 mb-3" style="color: var(--color-text)">{title}</h1>
-      <div class="flex flex-wrap gap-4 text-sm" style="color: var(--color-muted)">
+      <a href="/projects" class="text-primary hover:underline text-base" style="text-decoration: none;">← BACK TO QUESTS</a>
+      <h1 class="pixel-sm sm:pixel-md font-heading mt-4 mb-3" style="color: var(--color-text);">{title}</h1>
+      <div class="flex flex-wrap gap-3 text-base" style="color: var(--color-muted);">
         <span>{projectDate}</span>
-        <span>&middot;</span>
+        <span>·</span>
         <span>{category}</span>
-        <span>&middot;</span>
+        <span>·</span>
         <span>Client: {client}</span>
+        {commits > 0 && (
+          <span class="pixel-xs font-heading px-2 py-1" style="background: var(--color-primary); color: white;">
+            ★ {commits.toLocaleString()} COMMITS
+          </span>
+        )}
       </div>
     </header>
-    <div class="mb-8 rounded-lg overflow-hidden" style="background: var(--color-surface)">
-      <Image
-        src={portfolioImg}
-        alt={alt}
-        width={900}
-        height={650}
-        loading="eager"
-        class="w-full h-auto"
-      />
-    </div>
+    {portfolioImg ? (
+      <div class="mb-8 inventory-slot overflow-hidden" style="background: var(--color-surface);">
+        <Image
+          src={portfolioImg}
+          alt={alt}
+          width={900}
+          height={650}
+          loading="eager"
+          class="w-full h-auto"
+        />
+      </div>
+    ) : (
+      <div class="mb-8 inventory-slot flex items-center justify-center h-64" style="background: var(--color-bg);">
+        <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke={icon.color} stroke-width="2" stroke-linecap="square" class="opacity-40">
+          <path d={icon.path}></path>
+        </svg>
+      </div>
+    )}
     <div class="prose prose-lg max-w-none dark:prose-invert mb-8" style="color: var(--color-text)">
       <p>{description}</p>
     </div>
-    <a
-      href={link}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn-primary inline-flex items-center gap-2"
-    >
-      View on GitHub
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-        <polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="10" y1="14" x2="21" y2="3"></line>
-      </svg>
-    </a>
+    {link && (
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pixel-btn inline-flex items-center gap-2"
+        style="text-decoration: none;"
+      >
+        VIEW ON GITHUB →
+      </a>
+    )}
   </article>
 </BaseLayout>

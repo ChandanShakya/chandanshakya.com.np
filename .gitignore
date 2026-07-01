@@ -29,3 +29,5 @@ bun-debug.log*
 # os
 .DS_Store
 Thumbs.db
+.mimocode/
+.opencode/

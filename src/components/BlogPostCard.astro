@@ -12,28 +12,33 @@ interface Props {
 const { title, description, date, tags = [], slug } = Astro.props;
 ---
 
-<article class="py-6" style="border-bottom: 1px solid var(--color-border)">
+<article class="inventory-slot p-4 sm:p-5 mb-4">
   <a href={`/blog/${slug}`} class="group block">
-    <h2 class="text-xl sm:text-2xl font-heading font-bold mb-2 group-hover:text-primary transition-colors" style="color: var(--color-text)">
+    <h2 class="pixel-xs sm:pixel-sm font-heading leading-relaxed mb-2 group-hover:text-primary transition-colors" style="color: var(--color-text); text-decoration: none;">
       {title}
     </h2>
   </a>
-  <time datetime={date.toISOString()} class="text-sm" style="color: var(--color-muted)">
-    {formatDate(date)}
-  </time>
-  <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-muted)">
+  <div class="flex items-center gap-2 mb-2">
+    <span class="pixel-xs font-heading px-2 py-1" style="background: var(--color-secondary); color: var(--color-text);">
+      POSTED
+    </span>
+    <time datetime={date.toISOString()} class="text-base" style="color: var(--color-muted);">
+      {formatDate(date)}
+    </time>
+  </div>
+  <p class="text-xl leading-relaxed mb-3" style="color: var(--color-muted);">
     {description}
   </p>
   {tags.length > 0 && (
-    <div class="flex flex-wrap gap-2 mt-3">
+    <div class="flex flex-wrap gap-2 mb-3">
       {tags.map((tag) => (
-        <span class="text-xs px-2 py-1 rounded-full" style="background: var(--color-surface); color: var(--color-muted)">
+        <span class="text-base px-2 py-0.5" style="background: var(--color-bg); color: var(--color-muted); border: 2px solid var(--color-border);">
           {tag}
         </span>
       ))}
     </div>
   )}
-  <a href={`/blog/${slug}`} class="inline-block mt-3 text-sm font-medium text-primary hover:underline">
-    Read more &rarr;
+  <a href={`/blog/${slug}`} class="inline-block pixel-xs font-heading text-primary hover:underline min-h-[44px] flex items-center" style="text-decoration: none;">
+    READ MORE →
   </a>
 </article>

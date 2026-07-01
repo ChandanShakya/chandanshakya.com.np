@@ -7,24 +7,175 @@ import SocialLinks from './SocialLinks.astro';
 const profileImg = getProfileImage();
 ---
 
-<header class="text-center py-16 sm:py-24 px-4">
-  <Image
-    src={profileImg}
-    alt="Chandan Shakya"
-    width={256}
-    height={256}
-    loading="eager"
-    fetchpriority="high"
-    class="w-32 h-32 sm:w-40 sm:h-40 rounded-full mx-auto mb-6 object-cover"
-  />
-  <h1 class="text-3xl sm:text-4xl font-heading font-bold mb-2" style="color: var(--color-text)">
-    {SITE.title}
-  </h1>
-  <p class="text-lg mb-6" style="color: var(--color-muted)">{SITE.skills}</p>
-  <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-    <button data-resume-open class="btn-outline cursor-pointer">
-      View Resume
-    </button>
+<section class="hero relative min-h-[90vh] flex items-center justify-center overflow-hidden" style="background: var(--color-bg);">
+  <!-- Pixel grid background -->
+  <div class="hero-pixel-grid absolute inset-0"></div>
+
+  <!-- Decorative pixel stars -->
+  <div class="pixel-star" style="top: 12%; left: 15%; animation: twinkle 3s ease-in-out infinite;"></div>
+  <div class="pixel-star" style="top: 20%; right: 20%; animation: twinkle 3s ease-in-out 0.5s infinite;"></div>
+  <div class="pixel-star" style="top: 65%; left: 10%; animation: twinkle 3s ease-in-out 1s infinite;"></div>
+  <div class="pixel-star" style="top: 70%; right: 12%; animation: twinkle 3s ease-in-out 1.5s infinite;"></div>
+  <div class="pixel-star" style="top: 35%; left: 5%; animation: twinkle 3s ease-in-out 2s infinite;"></div>
+  <div class="pixel-star" style="top: 45%; right: 8%; animation: twinkle 3s ease-in-out 0.8s infinite;"></div>
+
+  <!-- Pixel art plants — Stardew Valley crop sprites -->
+  <div class="pixel-crop pixel-crop-left" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-right" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-far-left" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-far-right" aria-hidden="true"></div>
+
+  <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
+    <!-- Profile image — pixel art frame -->
+    <div class="mb-8 inline-block" style="animation: heroSlideUp 0.6s ease-out 0.1s both;">
+      <div class="inventory-slot p-2 inline-block">
+        <Image
+          src={profileImg}
+          alt="Chandan Shakya"
+          width={256}
+          height={256}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="w-24 h-24 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-cover"
+          style="image-rendering: pixelated;"
+        />
+      </div>
+    </div>
+
+    <!-- Name -->
+    <h1 class="pixel-2xl sm:pixel-3xl font-heading mb-4" style="color: var(--color-text); animation: heroSlideUp 0.6s ease-out 0.2s both;">
+      {SITE.title}
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-xl sm:text-2xl mb-8" style="color: var(--color-muted); animation: heroSlideUp 0.6s ease-out 0.3s both;">
+      {SITE.skills}
+    </p>
+
+    <!-- CTAs — game buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8" style="animation: heroSlideUp 0.6s ease-out 0.4s both;">
+      <button data-resume-open class="pixel-btn cursor-pointer">
+        ▶ VIEW RESUME
+      </button>
+      <a href="/blog" class="pixel-btn-outline" style="text-decoration: none;">
+        ◆ READ BLOG
+      </a>
+    </div>
+
+    <!-- Social links -->
+    <div style="animation: heroSlideUp 0.6s ease-out 0.5s both;">
+      <SocialLinks />
+    </div>
   </div>
-  <SocialLinks />
-</header>
+
+  <!-- Scroll indicator — pixel arrow -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2" style="animation: heroSlideUp 0.6s ease-out 0.7s both;">
+    <div class="scroll-arrow">▼</div>
+  </div>
+</section>
+
+<style>
+  .hero-pixel-grid {
+    background-image:
+      linear-gradient(var(--color-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.15;
+  }
+
+  .pixel-star {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--color-secondary);
+    opacity: 0.6;
+  }
+
+  /* Stardew Valley pixel art crop sprites using box-shadow */
+  .pixel-crop {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: transparent;
+    opacity: 0.5;
+  }
+
+  .pixel-crop-left {
+    bottom: 15%;
+    left: 8%;
+    box-shadow:
+      /* soil */
+      -8px 16px 0 #8B4513, -4px 16px 0 #8B4513, 0px 16px 0 #8B4513, 4px 16px 0 #8B4513, 8px 16px 0 #8B4513,
+      /* stem */
+      0px 12px 0 #5B8731, 0px 8px 0 #5B8731,
+      /* leaves */
+      -4px 8px 0 #6B8E23, 4px 8px 0 #6B8E23,
+      -8px 4px 0 #228B22, 8px 4px 0 #228B22,
+      /* flower */
+      0px 0px 0 #E07B39, -4px -4px 0 #DAA520, 4px -4px 0 #DAA520, 0px -8px 0 #DAA520;
+  }
+
+  .pixel-crop-right {
+    bottom: 15%;
+    right: 8%;
+    box-shadow:
+      /* soil */
+      -8px 16px 0 #8B4513, -4px 16px 0 #8B4513, 0px 16px 0 #8B4513, 4px 16px 0 #8B4513, 8px 16px 0 #8B4513,
+      /* stem */
+      0px 12px 0 #5B8731, 0px 8px 0 #5B8731,
+      /* leaves */
+      -4px 8px 0 #6B8E23, 4px 8px 0 #6B8E23,
+      -8px 4px 0 #228B22, 8px 4px 0 #228B22,
+      /* fruit (tomato) */
+      0px 0px 0 #DC2626, -4px -4px 0 #EF4444, 4px -4px 0 #EF4444;
+  }
+
+  .pixel-crop-far-left {
+    bottom: 22%;
+    left: 3%;
+    opacity: 0.3;
+    box-shadow:
+      /* stem */
+      0px 8px 0 #5B8731, 0px 4px 0 #5B8731,
+      /* leaves */
+      -4px 4px 0 #6B8E23, 4px 4px 0 #6B8E23,
+      /* star */
+      0px 0px 0 #DAA520;
+  }
+
+  .pixel-crop-far-right {
+    bottom: 22%;
+    right: 3%;
+    opacity: 0.3;
+    box-shadow:
+      /* stem */
+      0px 8px 0 #5B8731, 0px 4px 0 #5B8731,
+      /* leaves */
+      -4px 4px 0 #6B8E23, 4px 4px 0 #6B8E23,
+      /* star */
+      0px 0px 0 #DAA520;
+  }
+
+  .scroll-arrow {
+    font-family: 'Silkscreen', monospace;
+    font-size: 1rem;
+    color: var(--color-muted);
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+
+  @keyframes heroSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(8px); opacity: 0.3; }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 0.2; transform: scale(0.6); }
+  }
+</style>

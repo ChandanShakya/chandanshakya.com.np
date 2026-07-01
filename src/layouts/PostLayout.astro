@@ -8,11 +8,10 @@ interface Props {
   description: string;
   date: Date;
   tags?: string[];
-  math?: boolean;
   comments?: boolean;
 }
 
-const { title, description, date, tags = [], math = false, comments = true } = Astro.props;
+const { title, description, date, tags = [], comments = true } = Astro.props;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -21,6 +20,7 @@ const jsonLd = {
   description: description,
   datePublished: date.toISOString(),
   dateModified: date.toISOString(),
+  image: `${SITE.siteUrl}/img/profile.webp`,
   author: {
     '@type': 'Person',
     name: SITE.author,
@@ -39,23 +39,17 @@ const jsonLd = {
 
 <BaseLayout title={`${title} | ${SITE.title}`} description={description} type="article">
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  {math && (
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
-      onload="renderMathInElement(document.body)"></script>
-  )}
-  <article class="max-w-3xl mx-auto px-4 py-12 sm:py-16">
+  <article class="max-w-3xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
     <header class="mb-8">
-      <a href="/blog" class="text-primary hover:underline text-sm font-medium">&larr; Back to Blog</a>
-      <h1 class="text-3xl sm:text-4xl font-heading font-bold mt-4 mb-3" style="color: var(--color-text)">{title}</h1>
-      <time datetime={date.toISOString()} class="text-sm" style="color: var(--color-muted)">
+      <a href="/blog" class="text-primary hover:underline text-base" style="text-decoration: none;">← BACK TO QUESTS</a>
+      <h1 class="pixel-sm sm:pixel-md font-heading mt-4 mb-3" style="color: var(--color-text);">{title}</h1>
+      <time datetime={date.toISOString()} class="text-base" style="color: var(--color-muted)">
         {formatDate(date)}
       </time>
       {tags.length > 0 && (
         <div class="flex flex-wrap gap-2 mt-3">
           {tags.map((tag) => (
-            <span class="text-xs px-2 py-1 rounded-full" style="background: var(--color-surface); color: var(--color-muted)">
+            <span class="text-base px-2 py-1" style="background: var(--color-bg); color: var(--color-muted); border: 2px solid var(--color-border);">
               {tag}
             </span>
           ))}
@@ -67,18 +61,34 @@ const jsonLd = {
     </div>
     {comments && (
       <footer class="mt-12 pt-8" style="border-top: 1px solid var(--color-border)">
-        <div id="disqus_thread"></div>
-        <script is:inline data-disqus={DISQUS_SHORTNAME}>
-          var disqus_config = function () {
-            this.page.url = window.location.href;
-            this.page.identifier = window.location.pathname;
-          };
-          (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://' + document.currentScript.dataset.disqus + '.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-          })();
+        <div id="disqus_thread" data-disqus={DISQUS_SHORTNAME}></div>
+        <script is:inline>
+          function initDisqus() {
+            var disqusThread = document.getElementById('disqus_thread');
+            if (!disqusThread) return;
+            var shortname = disqusThread.dataset.disqus;
+            if (!shortname) return;
+            if (window.DISQUS) {
+              DISQUS.reset({
+                reload: true,
+                config: function() {
+                  this.page.url = window.location.href;
+                  this.page.identifier = window.location.pathname;
+                }
+              });
+            } else {
+              var disqus_config = function() {
+                this.page.url = window.location.href;
+                this.page.identifier = window.location.pathname;
+              };
+              var d = document, s = d.createElement('script');
+              s.src = 'https://' + shortname + '.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            }
+          }
+          document.addEventListener('astro:page-load', initDisqus);
+          initDisqus();
         </script>
         <noscript>Please enable JavaScript to view comments.</noscript>
       </footer>
