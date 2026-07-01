@@ -1,0 +1,42 @@
+---
+import { FOOTER, SOCIAL_LINKS } from '../lib/constants';
+---
+
+<footer class="py-8 px-4 text-center" style="border-top: 1px solid var(--color-border)">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+      <div>
+        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Location</h3>
+        <p class="text-sm" style="color: var(--color-muted)">{FOOTER.location}</p>
+      </div>
+      <div>
+        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Social</h3>
+        <div class="flex items-center justify-center gap-3">
+          {SOCIAL_LINKS.map((link) => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.title}
+              class="text-sm transition-colors hover:text-primary"
+              style="color: var(--color-muted)"
+            >
+              {link.title}
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 class="font-heading font-bold text-sm mb-2" style="color: var(--color-text)">Credits</h3>
+        <p class="text-sm" style="color: var(--color-muted)">{FOOTER.name}</p>
+      </div>
+    </div>
+    <div class="text-sm" style="color: var(--color-muted)">
+      <p>Copyright &copy; {FOOTER.name} {new Date().getFullYear()}</p>
+      <div class="mt-2 flex items-center justify-center gap-4">
+        <a href="/rss.xml" class="hover:text-primary transition-colors">RSS</a>
+        <a href="/sitemap-index.xml" class="hover:text-primary transition-colors">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,39 @@
+---
+import { formatDate } from '../lib/utils';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  tags?: string[];
+  slug: string;
+}
+
+const { title, description, date, tags = [], slug } = Astro.props;
+---
+
+<article class="py-6" style="border-bottom: 1px solid var(--color-border)">
+  <a href={`/blog/${slug}`} class="group block">
+    <h2 class="text-xl sm:text-2xl font-heading font-bold mb-2 group-hover:text-primary transition-colors" style="color: var(--color-text)">
+      {title}
+    </h2>
+  </a>
+  <time datetime={date.toISOString()} class="text-sm" style="color: var(--color-muted)">
+    {formatDate(date)}
+  </time>
+  <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-muted)">
+    {description}
+  </p>
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-2 mt-3">
+      {tags.map((tag) => (
+        <span class="text-xs px-2 py-1 rounded-full" style="background: var(--color-surface); color: var(--color-muted)">
+          {tag}
+        </span>
+      ))}
+    </div>
+  )}
+  <a href={`/blog/${slug}`} class="inline-block mt-3 text-sm font-medium text-primary hover:underline">
+    Read more &rarr;
+  </a>
+</article>

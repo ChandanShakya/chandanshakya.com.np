@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PortfolioCard from '../../components/PortfolioCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../lib/constants';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Projects" description={`Projects by ${SITE.author}`}>
+  <div class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
+    <h1 class="text-3xl sm:text-4xl font-heading font-bold mb-12" style="color: var(--color-text)">
+      Projects
+    </h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <PortfolioCard
+          title={project.data.title}
+          img={project.data.img}
+          alt={project.data.alt}
+          category={project.data.category}
+          slug={project.id.replace(/\.md$/, '')}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

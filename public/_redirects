@@ -1,0 +1,10 @@
+# Old blog permalogs -> new /blog/ paths
+/api-first-livewire-architecture  /blog/api-first-livewire-architecture  301
+/laravel-livewire-coding-standards /blog/laravel-livewire-coding-standards 301
+/laravel-trait-audit-fields       /blog/laravel-trait-audit-fields       301
+/car-driving-license-nepal        /blog/car-driving-license-nepal        301
+/discord-dark-css                 /blog/discord-dark-css                 301
+/mysql-convention-for-laravel     /blog/mysql-convention-for-laravel     301
+/redmi-note-10s-lineage           /blog/redmi-note-10s-lineage           301
+/ten-things-i-hate-about-you      /blog/ten-things-i-hate-about-you      301
+/welcome-to-my-blog               /blog/welcome-to-my-blog               301

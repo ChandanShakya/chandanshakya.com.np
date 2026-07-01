@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import PortfolioCard from '../components/PortfolioCard.astro';
+import About from '../components/About.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout>
+  <Header />
+
+  <section id="portfolio" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-heading font-bold text-center mb-12" style="color: var(--color-text)">
+        Portfolio
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <PortfolioCard
+            title={project.data.title}
+            img={project.data.img}
+            alt={project.data.alt}
+            category={project.data.category}
+            slug={project.id.replace(/\.md$/, '')}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <About />
+  <ContactForm />
+</BaseLayout>

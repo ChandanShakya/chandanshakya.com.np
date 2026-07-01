@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '../lib/utils';
+import { SITE } from '../lib/constants';
+
+const allPosts = await getCollection('blog');
+const allProjects = await getCollection('projects');
+
+const blogPosts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const projects = allProjects.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Group by year
+const blogByYear = blogPosts.reduce((acc, post) => {
+  const year = post.data.date.getFullYear().toString();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {} as Record<string, typeof blogPosts>);
+
+const projectsByYear = projects.reduce((acc, project) => {
+  const year = project.data.date.getFullYear().toString();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(project);
+  return acc;
+}, {} as Record<string, typeof projects>);
+
+const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsByYear)])].sort().reverse();
+---
+
+<BaseLayout title="Archive" description={`Archive of all posts and projects by ${SITE.author}`}>
+  <div class="max-w-3xl mx-auto px-4 py-12 sm:py-16">
+    <h1 class="text-3xl sm:text-4xl font-heading font-bold mb-12" style="color: var(--color-text)">
+      Archive
+    </h1>
+    {years.map((year) => (
+      <div class="mb-10">
+        <h2 class="text-xl font-heading font-bold mb-4" style="color: var(--color-text)">{year}</h2>
+        {blogByYear[year] && (
+          <div class="mb-6">
+            <h3 class="text-sm font-medium mb-2" style="color: var(--color-muted)">Blog Posts</h3>
+            <ul class="space-y-2">
+              {blogByYear[year].map((post) => (
+                <li>
+                  <a href={`/blog/${post.id.replace(/\.md$/, '')}`} class="text-sm hover:text-primary transition-colors" style="color: var(--color-text)">
+                    {post.data.title}
+                  </a>
+                  <span class="text-xs ml-2" style="color: var(--color-muted)">{formatDate(post.data.date)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {projectsByYear[year] && (
+          <div>
+            <h3 class="text-sm font-medium mb-2" style="color: var(--color-muted)">Projects</h3>
+            <ul class="space-y-2">
+              {projectsByYear[year].map((project) => (
+                <li>
+                  <a href={`/projects/${project.id.replace(/\.md$/, '')}`} class="text-sm hover:text-primary transition-colors" style="color: var(--color-text)">
+                    {project.data.title}
+                  </a>
+                  <span class="text-xs ml-2" style="color: var(--color-muted)">{formatDate(project.data.date)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,79 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../lib/utils';
+import { SITE } from '../lib/constants';
+import { getPortfolioImage } from '../lib/images';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  img: string;
+  alt: string;
+  category: string;
+  link: string;
+  client: string;
+  projectDate: string;
+}
+
+const { title, description, date, img, alt, category, link, client, projectDate } = Astro.props;
+const portfolioImg = getPortfolioImage(img);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: title,
+  description: description,
+  dateCreated: date.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: SITE.author,
+    url: SITE.siteUrl,
+  },
+  url: link,
+};
+---
+
+<BaseLayout title={`${title} | ${SITE.title}`} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <article class="max-w-4xl mx-auto px-4 py-12 sm:py-16">
+    <header class="mb-8">
+      <a href="/projects" class="text-primary hover:underline text-sm font-medium">&larr; Back to Projects</a>
+      <h1 class="text-3xl sm:text-4xl font-heading font-bold mt-4 mb-3" style="color: var(--color-text)">{title}</h1>
+      <div class="flex flex-wrap gap-4 text-sm" style="color: var(--color-muted)">
+        <span>{projectDate}</span>
+        <span>&middot;</span>
+        <span>{category}</span>
+        <span>&middot;</span>
+        <span>Client: {client}</span>
+      </div>
+    </header>
+    <div class="mb-8 rounded-lg overflow-hidden" style="background: var(--color-surface)">
+      <Image
+        src={portfolioImg}
+        alt={alt}
+        width={900}
+        height={650}
+        loading="eager"
+        class="w-full h-auto"
+      />
+    </div>
+    <div class="prose prose-lg max-w-none dark:prose-invert mb-8" style="color: var(--color-text)">
+      <p>{description}</p>
+    </div>
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-primary inline-flex items-center gap-2"
+    >
+      View on GitHub
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    </a>
+  </article>
+</BaseLayout>
