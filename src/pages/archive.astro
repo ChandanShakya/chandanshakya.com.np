@@ -38,7 +38,8 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
     <h1 class="pixel-md sm:pixel-lg font-heading mb-12" style="color: var(--color-text);">
       ◆ ARCHIVE ◆
     </h1>
-    {years.map((year) => (
+    {years.map((year, index) => (
+      <>
       <div class="mb-10">
         <h2 class="pixel-xs sm:pixel-sm font-heading mb-4" style="color: var(--color-text);">{year}</h2>
         {blogByYear[year] && (
@@ -72,6 +73,10 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
           </div>
         )}
       </div>
+      {index < years.length - 1 && (
+        <hr class="my-8" style="border: none; border-top: 4px solid var(--color-border);" />
+      )}
+      </>
     ))}
   </div>
 </BaseLayout>

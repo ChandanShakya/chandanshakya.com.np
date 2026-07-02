@@ -19,10 +19,9 @@
     <!-- PDF viewer -->
     <div id="pdf-container" class="flex-1 min-h-0 overflow-auto" style="background: var(--color-surface);"></div>
     <!-- Zoom controls -->
-    <div id="pdf-controls" class="flex items-center justify-center gap-2 py-2 shrink-0" style="border-top: 4px solid var(--color-border);">
-      <button id="pdf-zoom-out" class="pixel-toggle text-sm" aria-label="Zoom out">-</button>
-      <span id="pdf-zoom-level" class="text-sm" style="color: var(--color-text);">100%</span>
-      <button id="pdf-zoom-in" class="pixel-toggle text-sm" aria-label="Zoom in">+</button>
+    <div id="pdf-controls" class="flex items-center justify-center gap-3 py-2 px-4 shrink-0" style="border-top: 4px solid var(--color-border);">
+      <input id="pdf-zoom-slider" type="range" min="25" max="500" value="100" class="flex-1 max-w-[200px] accent-[var(--color-primary)]" aria-label="Zoom level">
+      <span id="pdf-zoom-level" class="text-sm min-w-[3rem] text-center" style="color: var(--color-text);">100%</span>
       <button id="pdf-fit" class="pixel-toggle text-sm" aria-label="Fit to width">FIT</button>
     </div>
   </div>
@@ -44,13 +43,13 @@
       var panel = document.getElementById('resume-panel');
       var closeBtn = document.getElementById('resume-close');
       var container = document.getElementById('pdf-container');
-      var zoomIn = document.getElementById('pdf-zoom-in');
-      var zoomOut = document.getElementById('pdf-zoom-out');
+      var slider = document.getElementById('pdf-zoom-slider');
       var zoomLevel = document.getElementById('pdf-zoom-level');
       var fitBtn = document.getElementById('pdf-fit');
 
       function updateZoomUI() {
         zoomLevel.textContent = Math.round(currentScale * 100) + '%';
+        slider.value = Math.round(currentScale * 100);
       }
 
       function fitToWidth() {
@@ -63,42 +62,30 @@
 
       function rerender() {
         if (!pdfDoc) return;
-        var container = document.getElementById('pdf-container');
-        var canvases = container.querySelectorAll('.pdf-page');
         var dpr = window.devicePixelRatio || 1;
+        var canvases = container.querySelectorAll('.pdf-page');
         var promises = [];
-        for (var i = 0; i < canvases.length; i++) {
-          var canvas = canvases[i];
+        canvases.forEach(function(canvas) {
           var pageNum = parseInt(canvas.getAttribute('data-page'));
           promises.push(pdfDoc.getPage(pageNum).then(function(page) {
             var viewport = page.getViewport({ scale: currentScale * dpr });
-            var c = container.querySelector('[data-page="' + page._pageIndex + '"]');
-            if (!c) return;
-            c.width = viewport.width;
-            c.height = viewport.height;
-            c.style.width = (viewport.width / dpr) + 'px';
-            c.style.height = (viewport.height / dpr) + 'px';
-            return page.render({ canvasContext: c.getContext('2d'), viewport: viewport }).promise;
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            canvas.style.width = (viewport.width / dpr) + 'px';
+            canvas.style.height = (viewport.height / dpr) + 'px';
+            return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
           }));
-        }
+        });
         Promise.all(promises);
       }
 
-      zoomIn.addEventListener('click', function() {
-        currentScale = Math.min(currentScale * 1.25, 5);
+      slider.addEventListener('input', function() {
+        currentScale = parseInt(slider.value) / 100;
         rerender();
         updateZoomUI();
       });
 
-      zoomOut.addEventListener('click', function() {
-        currentScale = Math.max(currentScale / 1.25, 0.25);
-        rerender();
-        updateZoomUI();
-      });
-
-      fitBtn.addEventListener('click', function() {
-        fitToWidth();
-      });
+      fitBtn.addEventListener('click', fitToWidth);
 
       function open() {
         modal.classList.remove('hidden');
@@ -139,11 +126,7 @@
       backdrop.addEventListener('click', close);
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
-        if (!modal.classList.contains('hidden')) {
-          if (e.key === '+' || e.key === '=') { zoomIn.click(); e.preventDefault(); }
-          if (e.key === '-') { zoomOut.click(); e.preventDefault(); }
-          if (e.key === '0') { fitBtn.click(); e.preventDefault(); }
-        }
+        if (!modal.classList.contains('hidden') && e.key === '0') { fitBtn.click(); e.preventDefault(); }
       });
 
       var lastTouchDist = 0;
@@ -158,8 +141,7 @@
           e.preventDefault();
           var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
           if (lastTouchDist > 0) {
-            var ratio = dist / lastTouchDist;
-            currentScale = Math.min(Math.max(currentScale * ratio, 0.25), 5);
+            currentScale = Math.min(Math.max(currentScale * (dist / lastTouchDist), 0.25), 5);
             rerender();
             updateZoomUI();
           }
@@ -185,6 +167,7 @@
         var containerWidth = container.clientWidth - 32;
         baseScale = containerWidth / viewport.width;
         currentScale = baseScale;
+        document.getElementById('pdf-zoom-slider').value = Math.round(currentScale * 100);
         document.getElementById('pdf-zoom-level').textContent = '100%';
         var allPages = [];
         for (var i = 1; i <= pdfDoc.numPages; i++) allPages.push(i);
