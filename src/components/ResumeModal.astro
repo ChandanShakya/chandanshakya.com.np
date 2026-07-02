@@ -4,21 +4,14 @@
 <div id="resume-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Resume viewer">
   <div id="resume-backdrop" class="absolute inset-0 bg-black/60"></div>
   <div id="resume-panel" class="relative w-full max-w-3xl h-[85vh] pixel-dialog overflow-hidden flex flex-col" style="background: var(--color-bg);">
-    <!-- Header bar -->
     <div class="flex items-center justify-between px-5 py-3 shrink-0" style="border-bottom: 4px solid var(--color-border);">
       <h2 class="font-heading text-[0.5rem]" style="color: var(--color-text);">CHANDAN SHAKYA — RESUME</h2>
       <div class="flex items-center gap-3">
-        <a href="/files/ChandanShakyaCV.pdf" download="ChandanShakyaCV.pdf"
-           class="pixel-btn text-[0.4rem] py-2 px-4"
-           style="text-decoration: none;">
-          DOWNLOAD
-        </a>
+        <a href="/files/ChandanShakyaCV.pdf" download="ChandanShakyaCV.pdf" class="pixel-btn text-[0.4rem] py-2 px-4" style="text-decoration: none;">DOWNLOAD</a>
         <button id="resume-close" class="pixel-toggle text-sm" aria-label="Close">✕</button>
       </div>
     </div>
-    <!-- PDF viewer -->
     <div id="pdf-container" class="flex-1 min-h-0 overflow-auto" style="background: var(--color-surface);"></div>
-    <!-- Zoom controls -->
     <div id="pdf-controls" class="flex items-center justify-center gap-3 py-2 px-4 shrink-0" style="border-top: 4px solid var(--color-border);">
       <input id="pdf-zoom-slider" type="range" min="25" max="500" value="100" class="flex-1 max-w-[200px] accent-[var(--color-primary)]" aria-label="Zoom level">
       <span id="pdf-zoom-level" class="text-sm min-w-[3rem] text-center" style="color: var(--color-text);">100%</span>
@@ -27,173 +20,170 @@
   </div>
 </div>
 
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script is:inline type="module">
+  import * as pdfjsLib from '/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
-<script is:inline>
-  (function() {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    var pdfDoc = null;
-    var currentScale = 1;
-    var baseScale = 1;
+  var pdfDoc = null;
+  var currentScale = 1;
+  var baseScale = 1;
 
-    function initResumeModal() {
-      var modal = document.getElementById('resume-modal');
-      if (!modal) return;
-      var backdrop = document.getElementById('resume-backdrop');
-      var panel = document.getElementById('resume-panel');
-      var closeBtn = document.getElementById('resume-close');
-      var container = document.getElementById('pdf-container');
-      var slider = document.getElementById('pdf-zoom-slider');
-      var zoomLevel = document.getElementById('pdf-zoom-level');
-      var fitBtn = document.getElementById('pdf-fit');
+  function initResumeModal() {
+    var modal = document.getElementById('resume-modal');
+    if (!modal) return;
+    var backdrop = document.getElementById('resume-backdrop');
+    var panel = document.getElementById('resume-panel');
+    var closeBtn = document.getElementById('resume-close');
+    var container = document.getElementById('pdf-container');
+    var slider = document.getElementById('pdf-zoom-slider');
+    var zoomLevel = document.getElementById('pdf-zoom-level');
+    var fitBtn = document.getElementById('pdf-fit');
 
-      function updateZoomUI() {
-        zoomLevel.textContent = Math.round(currentScale * 100) + '%';
-        slider.value = Math.round(currentScale * 100);
-      }
-
-      function fitToWidth() {
-        var containerWidth = container.clientWidth - 32;
-        baseScale = containerWidth / (pdfDoc ? pdfDoc._pageInfo.baseWidth : 612);
-        currentScale = baseScale;
-        rerender();
-        updateZoomUI();
-      }
-
-      function rerender() {
-        if (!pdfDoc) return;
-        var dpr = window.devicePixelRatio || 1;
-        var canvases = container.querySelectorAll('.pdf-page');
-        var promises = [];
-        canvases.forEach(function(canvas) {
-          var pageNum = parseInt(canvas.getAttribute('data-page'));
-          promises.push(pdfDoc.getPage(pageNum).then(function(page) {
-            var viewport = page.getViewport({ scale: currentScale * dpr });
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.style.width = (viewport.width / dpr) + 'px';
-            canvas.style.height = (viewport.height / dpr) + 'px';
-            return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-          }));
-        });
-        Promise.all(promises);
-      }
-
-      slider.addEventListener('input', function() {
-        currentScale = parseInt(slider.value) / 100;
-        rerender();
-        updateZoomUI();
-      });
-
-      fitBtn.addEventListener('click', fitToWidth);
-
-      function open() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        requestAnimationFrame(function() {
-          backdrop.style.opacity = '1';
-          panel.style.opacity = '1';
-          panel.style.transform = 'translateY(0) scale(1)';
-        });
-        document.body.style.overflow = 'hidden';
-        loadPDF(container);
-      }
-
-      function close() {
-        backdrop.style.opacity = '0';
-        panel.style.opacity = '0';
-        panel.style.transform = 'translateY(16px) scale(0.97)';
-        setTimeout(function() {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-          document.body.style.overflow = '';
-        }, 200);
-        destroyPDF();
-      }
-
-      function destroyPDF() {
-        if (pdfDoc) {
-          pdfDoc.destroy();
-          pdfDoc = null;
-        }
-        container.innerHTML = '';
-      }
-
-      document.querySelectorAll('[data-resume-open]').forEach(function(el) {
-        el.addEventListener('click', function(e) { e.preventDefault(); open(); });
-      });
-      closeBtn.addEventListener('click', close);
-      backdrop.addEventListener('click', close);
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
-        if (!modal.classList.contains('hidden') && e.key === '0') { fitBtn.click(); e.preventDefault(); }
-      });
-
-      var lastTouchDist = 0;
-      container.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-          lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        }
-      }, { passive: true });
-
-      container.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-          e.preventDefault();
-          var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-          if (lastTouchDist > 0) {
-            currentScale = Math.min(Math.max(currentScale * (dist / lastTouchDist), 0.25), 5);
-            rerender();
-            updateZoomUI();
-          }
-          lastTouchDist = dist;
-        }
-      }, { passive: false });
-
-      container.addEventListener('touchend', function() { lastTouchDist = 0; }, { passive: true });
+    function updateZoomUI() {
+      zoomLevel.textContent = Math.round(currentScale * 100) + '%';
+      slider.value = Math.round(currentScale * 100);
     }
 
-    function loadPDF(container) {
-      if (pdfDoc) return;
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Loading PDF...</div>';
+    function fitToWidth() {
+      var containerWidth = container.clientWidth - 32;
+      baseScale = containerWidth / (pdfDoc && pdfDoc._pageInfo ? pdfDoc._pageInfo.baseWidth : 612);
+      currentScale = baseScale;
+      rerender();
+      updateZoomUI();
+    }
 
-      var loadingTask = pdfjsLib.getDocument('/files/ChandanShakyaCV.pdf');
-      loadingTask.promise.then(function(pdf) {
-        pdfDoc = pdf;
-        container.innerHTML = '';
-        return pdf.getPage(1);
-      }).then(function(page) {
-        var viewport = page.getViewport({ scale: 1 });
-        pdfDoc._pageInfo = { baseWidth: viewport.width };
-        var containerWidth = container.clientWidth - 32;
-        baseScale = containerWidth / viewport.width;
-        currentScale = baseScale;
-        document.getElementById('pdf-zoom-slider').value = Math.round(currentScale * 100);
-        document.getElementById('pdf-zoom-level').textContent = '100%';
-        var allPages = [];
-        for (var i = 1; i <= pdfDoc.numPages; i++) allPages.push(i);
-        return Promise.all(allPages.map(function(num) { return pdfDoc.getPage(num); }));
-      }).then(function(pages) {
-        var dpr = window.devicePixelRatio || 1;
-        return Promise.all(pages.map(function(page) {
+    function rerender() {
+      if (!pdfDoc) return;
+      var dpr = window.devicePixelRatio || 1;
+      var canvases = container.querySelectorAll('.pdf-page');
+      var promises = [];
+      canvases.forEach(function(canvas) {
+        var pageNum = parseInt(canvas.getAttribute('data-page'));
+        promises.push(pdfDoc.getPage(pageNum).then(function(page) {
           var viewport = page.getViewport({ scale: currentScale * dpr });
-          var canvas = document.createElement('canvas');
-          canvas.className = 'pdf-page';
-          canvas.setAttribute('data-page', page._pageIndex + 1);
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           canvas.style.width = (viewport.width / dpr) + 'px';
           canvas.style.height = (viewport.height / dpr) + 'px';
-          container.appendChild(canvas);
           return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
         }));
-      }).catch(function() {
-        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Failed to load PDF.</div>';
       });
+      Promise.all(promises);
     }
 
-    initResumeModal();
-    document.addEventListener('astro:page-load', function() { pdfDoc = null; initResumeModal(); });
-  })();
+    slider.addEventListener('input', function() {
+      currentScale = parseInt(slider.value) / 100;
+      rerender();
+      updateZoomUI();
+    });
+
+    fitBtn.addEventListener('click', fitToWidth);
+
+    function open() {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      requestAnimationFrame(function() {
+        backdrop.style.opacity = '1';
+        panel.style.opacity = '1';
+        panel.style.transform = 'translateY(0) scale(1)';
+      });
+      document.body.style.overflow = 'hidden';
+      loadPDF(container);
+    }
+
+    function close() {
+      backdrop.style.opacity = '0';
+      panel.style.opacity = '0';
+      panel.style.transform = 'translateY(16px) scale(0.97)';
+      setTimeout(function() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }, 200);
+      destroyPDF();
+    }
+
+    function destroyPDF() {
+      if (pdfDoc) {
+        pdfDoc.destroy();
+        pdfDoc = null;
+      }
+      container.innerHTML = '';
+    }
+
+    document.querySelectorAll('[data-resume-open]').forEach(function(el) {
+      el.addEventListener('click', function(e) { e.preventDefault(); open(); });
+    });
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+      if (!modal.classList.contains('hidden') && e.key === '0') { fitBtn.click(); e.preventDefault(); }
+    });
+
+    var lastTouchDist = 0;
+    container.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        if (lastTouchDist > 0) {
+          currentScale = Math.min(Math.max(currentScale * (dist / lastTouchDist), 0.25), 5);
+          rerender();
+          updateZoomUI();
+        }
+        lastTouchDist = dist;
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', function() { lastTouchDist = 0; }, { passive: true });
+  }
+
+  function loadPDF(container) {
+    if (pdfDoc) return;
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Loading PDF...</div>';
+
+    pdfjsLib.getDocument('/files/ChandanShakyaCV.pdf').promise.then(function(pdf) {
+      pdfDoc = pdf;
+      container.innerHTML = '';
+      return pdf.getPage(1);
+    }).then(function(page) {
+      var viewport = page.getViewport({ scale: 1 });
+      pdfDoc._pageInfo = { baseWidth: viewport.width };
+      var containerWidth = container.clientWidth - 32;
+      baseScale = containerWidth / viewport.width;
+      currentScale = baseScale;
+      document.getElementById('pdf-zoom-slider').value = Math.round(currentScale * 100);
+      document.getElementById('pdf-zoom-level').textContent = Math.round(currentScale * 100) + '%';
+      var allPages = [];
+      for (var i = 1; i <= pdfDoc.numPages; i++) allPages.push(i);
+      return Promise.all(allPages.map(function(num) { return pdfDoc.getPage(num); }));
+    }).then(function(pages) {
+      var dpr = window.devicePixelRatio || 1;
+      return Promise.all(pages.map(function(page) {
+        var viewport = page.getViewport({ scale: currentScale * dpr });
+        var canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page';
+        canvas.setAttribute('data-page', page._pageIndex + 1);
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = (viewport.width / dpr) + 'px';
+        canvas.style.height = (viewport.height / dpr) + 'px';
+        container.appendChild(canvas);
+        return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+      }));
+    }).catch(function() {
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Failed to load PDF.</div>';
+    });
+  }
+
+  initResumeModal();
+  document.addEventListener('astro:page-load', function() { pdfDoc = null; initResumeModal(); });
 </script>
 
 <style>
