@@ -21,6 +21,7 @@ export const SOCIAL_LINKS = [
   { title: 'GitHub', url: 'https://github.com/ChandanShakya', icon: 'github' },
   { title: 'LinkedIn', url: 'https://linkedin.com/in/ChandanShakya', icon: 'linkedin' },
   { title: 'Facebook', url: 'https://www.facebook.com/Chandan.UwU', icon: 'facebook' },
+  { title: 'Instagram', url: 'https://www.instagram.com/_chandanshakya/', icon: 'instagram' },
 ];
 
 export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xgeqorqq';
