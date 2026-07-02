@@ -21,11 +21,11 @@
   </div>
 </div>
 
-<script is:inline src="/pdf.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script is:inline>
   (function() {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     var pdfDoc = null;
 
     function initResumeModal() {
