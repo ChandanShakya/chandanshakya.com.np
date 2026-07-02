@@ -15,7 +15,7 @@
     --color-bg: #F5E6C8;
     --color-surface: #FFF8E7;
     --color-text: #3D2B1F;
-    --color-muted: #7A6B5D;
+    --color-muted: #6B5B4A;
     --color-border: #5B3A1A;
     --pixel-shadow: 4px 0 0 0 var(--color-border), -4px 0 0 0 var(--color-border), 0 4px 0 0 var(--color-border), 0 -4px 0 0 var(--color-border), 4px 4px 0 0 var(--color-border), -4px 4px 0 0 var(--color-border), 4px -4px 0 0 var(--color-border), -4px -4px 0 0 var(--color-border);
   }

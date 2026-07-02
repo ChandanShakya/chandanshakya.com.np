@@ -9,7 +9,7 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft);
 <footer class="py-10 sm:py-12 px-5 text-center" style="border-top: 4px solid var(--color-border); background: var(--color-surface);">
   <div class="max-w-6xl mx-auto">
     <div class="pixel-dialog inline-block mb-8">
-      <p class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">
+      <p class="pixel-xs font-heading mb-2" style="color: var(--color-text);">
         ★ QUEST COMPLETE ★
       </p>
       <p class="text-xl sm:text-2xl" style="color: var(--color-muted);">
@@ -19,11 +19,11 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft);
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
       <div class="inventory-slot p-4">
-        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">LOCATION</h3>
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-text);">LOCATION</h3>
         <p class="text-xl" style="color: var(--color-text);">Kathmandu, Nepal</p>
       </div>
       <div class="inventory-slot p-4">
-        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">GUILD LINKS</h3>
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-text);">GUILD LINKS</h3>
         <div class="flex items-center justify-center gap-4 flex-wrap">
           {SOCIAL_LINKS.map((link) => (
             <a
@@ -40,7 +40,7 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft);
         </div>
       </div>
       <div class="inventory-slot p-4">
-        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-primary);">DEVELOPER</h3>
+        <h3 class="pixel-xs font-heading mb-2" style="color: var(--color-text);">DEVELOPER</h3>
         <p class="text-xl" style="color: var(--color-text);">{SITE.author}</p>
       </div>
     </div>
@@ -60,7 +60,7 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft);
         <span>·</span>
         <a href="/sitemap-index.xml" class="hover:text-primary transition-colors min-h-[44px] flex items-center" rel="noopener" style="text-decoration: none;">Sitemap</a>
       </div>
-      <p class="mt-4 pixel-xs font-heading" style="color: var(--color-secondary);">
+      <p class="mt-4 pixel-xs font-heading" style="color: var(--color-muted);">
         TO BE CONTINUED...
       </p>
     </div>
