@@ -18,6 +18,13 @@
     </div>
     <!-- PDF viewer -->
     <div id="pdf-container" class="flex-1 min-h-0 overflow-auto" style="background: var(--color-surface);"></div>
+    <!-- Zoom controls -->
+    <div id="pdf-controls" class="flex items-center justify-center gap-2 py-2 shrink-0" style="border-top: 4px solid var(--color-border);">
+      <button id="pdf-zoom-out" class="pixel-toggle text-sm" aria-label="Zoom out">-</button>
+      <span id="pdf-zoom-level" class="text-sm" style="color: var(--color-text);">100%</span>
+      <button id="pdf-zoom-in" class="pixel-toggle text-sm" aria-label="Zoom in">+</button>
+      <button id="pdf-fit" class="pixel-toggle text-sm" aria-label="Fit to width">FIT</button>
+    </div>
   </div>
 </div>
 
@@ -27,6 +34,8 @@
   (function() {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     var pdfDoc = null;
+    var currentScale = 1;
+    var baseScale = 1;
 
     function initResumeModal() {
       var modal = document.getElementById('resume-modal');
@@ -35,6 +44,61 @@
       var panel = document.getElementById('resume-panel');
       var closeBtn = document.getElementById('resume-close');
       var container = document.getElementById('pdf-container');
+      var zoomIn = document.getElementById('pdf-zoom-in');
+      var zoomOut = document.getElementById('pdf-zoom-out');
+      var zoomLevel = document.getElementById('pdf-zoom-level');
+      var fitBtn = document.getElementById('pdf-fit');
+
+      function updateZoomUI() {
+        zoomLevel.textContent = Math.round(currentScale * 100) + '%';
+      }
+
+      function fitToWidth() {
+        var containerWidth = container.clientWidth - 32;
+        baseScale = containerWidth / (pdfDoc ? pdfDoc._pageInfo.baseWidth : 612);
+        currentScale = baseScale;
+        rerender();
+        updateZoomUI();
+      }
+
+      function rerender() {
+        if (!pdfDoc) return;
+        var container = document.getElementById('pdf-container');
+        var canvases = container.querySelectorAll('.pdf-page');
+        var dpr = window.devicePixelRatio || 1;
+        var promises = [];
+        for (var i = 0; i < canvases.length; i++) {
+          var canvas = canvases[i];
+          var pageNum = parseInt(canvas.getAttribute('data-page'));
+          promises.push(pdfDoc.getPage(pageNum).then(function(page) {
+            var viewport = page.getViewport({ scale: currentScale * dpr });
+            var c = container.querySelector('[data-page="' + page._pageIndex + '"]');
+            if (!c) return;
+            c.width = viewport.width;
+            c.height = viewport.height;
+            c.style.width = (viewport.width / dpr) + 'px';
+            c.style.height = (viewport.height / dpr) + 'px';
+            return page.render({ canvasContext: c.getContext('2d'), viewport: viewport }).promise;
+          }));
+        }
+        Promise.all(promises);
+      }
+
+      zoomIn.addEventListener('click', function() {
+        currentScale = Math.min(currentScale * 1.25, 5);
+        rerender();
+        updateZoomUI();
+      });
+
+      zoomOut.addEventListener('click', function() {
+        currentScale = Math.max(currentScale / 1.25, 0.25);
+        rerender();
+        updateZoomUI();
+      });
+
+      fitBtn.addEventListener('click', function() {
+        fitToWidth();
+      });
 
       function open() {
         modal.classList.remove('hidden');
@@ -75,7 +139,35 @@
       backdrop.addEventListener('click', close);
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+        if (!modal.classList.contains('hidden')) {
+          if (e.key === '+' || e.key === '=') { zoomIn.click(); e.preventDefault(); }
+          if (e.key === '-') { zoomOut.click(); e.preventDefault(); }
+          if (e.key === '0') { fitBtn.click(); e.preventDefault(); }
+        }
       });
+
+      var lastTouchDist = 0;
+      container.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 2) {
+          lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          if (lastTouchDist > 0) {
+            var ratio = dist / lastTouchDist;
+            currentScale = Math.min(Math.max(currentScale * ratio, 0.25), 5);
+            rerender();
+            updateZoomUI();
+          }
+          lastTouchDist = dist;
+        }
+      }, { passive: false });
+
+      container.addEventListener('touchend', function() { lastTouchDist = 0; }, { passive: true });
     }
 
     function loadPDF(container) {
@@ -86,23 +178,33 @@
       loadingTask.promise.then(function(pdf) {
         pdfDoc = pdf;
         container.innerHTML = '';
-        for (var i = 1; i <= pdf.numPages; i++) {
-          renderPage(pdf, i, container);
-        }
+        return pdf.getPage(1);
+      }).then(function(page) {
+        var viewport = page.getViewport({ scale: 1 });
+        pdfDoc._pageInfo = { baseWidth: viewport.width };
+        var containerWidth = container.clientWidth - 32;
+        baseScale = containerWidth / viewport.width;
+        currentScale = baseScale;
+        document.getElementById('pdf-zoom-level').textContent = '100%';
+        var allPages = [];
+        for (var i = 1; i <= pdfDoc.numPages; i++) allPages.push(i);
+        return Promise.all(allPages.map(function(num) { return pdfDoc.getPage(num); }));
+      }).then(function(pages) {
+        var dpr = window.devicePixelRatio || 1;
+        return Promise.all(pages.map(function(page) {
+          var viewport = page.getViewport({ scale: currentScale * dpr });
+          var canvas = document.createElement('canvas');
+          canvas.className = 'pdf-page';
+          canvas.setAttribute('data-page', page._pageIndex + 1);
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.style.width = (viewport.width / dpr) + 'px';
+          canvas.style.height = (viewport.height / dpr) + 'px';
+          container.appendChild(canvas);
+          return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+        }));
       }).catch(function() {
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Failed to load PDF.</div>';
-      });
-    }
-
-    function renderPage(pdf, pageNum, container) {
-      pdf.getPage(pageNum).then(function(page) {
-        var viewport = page.getViewport({ scale: 1.5 });
-        var canvas = document.createElement('canvas');
-        canvas.className = 'pdf-page';
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
-        container.appendChild(canvas);
       });
     }
 
@@ -126,10 +228,8 @@
     scrollbar-color: var(--color-border) var(--color-surface);
   }
   .pdf-page {
-    width: 100%;
-    height: auto;
     display: block;
-    margin-bottom: 8px;
+    margin: 0 auto 8px;
     box-shadow: 4px 0 0 0 var(--color-border), -4px 0 0 0 var(--color-border), 0 4px 0 0 var(--color-border), 0 -4px 0 0 var(--color-border);
   }
 </style>
