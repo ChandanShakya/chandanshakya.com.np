@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-primary: #5B8731;
+  --color-secondary: #C4A35A;
+  --font-heading: "Silkscreen", monospace;
+  --font-body: "Pixelify Sans", monospace;
+}
 
 @layer base {
   :root {
