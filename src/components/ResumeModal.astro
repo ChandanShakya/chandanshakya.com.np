@@ -21,92 +21,94 @@
   </div>
 </div>
 
-<script is:inline type="module">
-  import * as pdfjsLib from '/pdf.min.mjs';
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+<script is:inline src="/pdf.min.js"></script>
 
-  var pdfDoc = null;
+<script is:inline>
+  (function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+    var pdfDoc = null;
 
-  function initResumeModal() {
-    var modal = document.getElementById('resume-modal');
-    if (!modal) return;
-    var backdrop = document.getElementById('resume-backdrop');
-    var panel = document.getElementById('resume-panel');
-    var closeBtn = document.getElementById('resume-close');
-    var container = document.getElementById('pdf-container');
+    function initResumeModal() {
+      var modal = document.getElementById('resume-modal');
+      if (!modal) return;
+      var backdrop = document.getElementById('resume-backdrop');
+      var panel = document.getElementById('resume-panel');
+      var closeBtn = document.getElementById('resume-close');
+      var container = document.getElementById('pdf-container');
 
-    function open() {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      requestAnimationFrame(function() {
-        backdrop.style.opacity = '1';
-        panel.style.opacity = '1';
-        panel.style.transform = 'translateY(0) scale(1)';
+      function open() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(function() {
+          backdrop.style.opacity = '1';
+          panel.style.opacity = '1';
+          panel.style.transform = 'translateY(0) scale(1)';
+        });
+        document.body.style.overflow = 'hidden';
+        loadPDF(container);
+      }
+
+      function close() {
+        backdrop.style.opacity = '0';
+        panel.style.opacity = '0';
+        panel.style.transform = 'translateY(16px) scale(0.97)';
+        setTimeout(function() {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          document.body.style.overflow = '';
+        }, 200);
+        destroyPDF();
+      }
+
+      function destroyPDF() {
+        if (pdfDoc) {
+          pdfDoc.destroy();
+          pdfDoc = null;
+        }
+        container.innerHTML = '';
+      }
+
+      document.querySelectorAll('[data-resume-open]').forEach(function(el) {
+        el.addEventListener('click', function(e) { e.preventDefault(); open(); });
       });
-      document.body.style.overflow = 'hidden';
-      loadPDF(container);
+      closeBtn.addEventListener('click', close);
+      backdrop.addEventListener('click', close);
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+      });
     }
 
-    function close() {
-      backdrop.style.opacity = '0';
-      panel.style.opacity = '0';
-      panel.style.transform = 'translateY(16px) scale(0.97)';
-      setTimeout(function() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-      }, 200);
-      destroyPDF();
+    function loadPDF(container) {
+      if (pdfDoc) return;
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Loading PDF...</div>';
+
+      var loadingTask = pdfjsLib.getDocument('/files/ChandanShakyaCV.pdf');
+      loadingTask.promise.then(function(pdf) {
+        pdfDoc = pdf;
+        container.innerHTML = '';
+        for (var i = 1; i <= pdf.numPages; i++) {
+          renderPage(pdf, i, container);
+        }
+      }).catch(function() {
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Failed to load PDF.</div>';
+      });
     }
 
-    function destroyPDF() {
-      if (pdfDoc) {
-        pdfDoc.destroy();
-        pdfDoc = null;
-      }
-      container.innerHTML = '';
+    function renderPage(pdf, pageNum, container) {
+      pdf.getPage(pageNum).then(function(page) {
+        var viewport = page.getViewport({ scale: 1.5 });
+        var canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page';
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
+        container.appendChild(canvas);
+      });
     }
 
-    document.querySelectorAll('[data-resume-open]').forEach(function(el) {
-      el.addEventListener('click', function(e) { e.preventDefault(); open(); });
-    });
-    closeBtn.addEventListener('click', close);
-    backdrop.addEventListener('click', close);
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
-    });
-  }
-
-  function loadPDF(container) {
-    if (pdfDoc) return;
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Loading PDF...</div>';
-
-    var loadingTask = pdfjsLib.getDocument('/files/ChandanShakyaCV.pdf');
-    loadingTask.promise.then(function(pdf) {
-      pdfDoc = pdf;
-      container.innerHTML = '';
-      for (var i = 1; i <= pdf.numPages; i++) {
-        renderPage(pdf, i, container);
-      }
-    }).catch(function() {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-muted);">Failed to load PDF.</div>';
-    });
-  }
-
-  function renderPage(pdf, pageNum, container) {
-    pdf.getPage(pageNum).then(function(page) {
-      var viewport = page.getViewport({ scale: 1.5 });
-      var canvas = document.createElement('canvas');
-      canvas.className = 'pdf-page';
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
-      container.appendChild(canvas);
-    });
-  }
-
-  initResumeModal();
-  document.addEventListener('astro:page-load', function() { pdfDoc = null; initResumeModal(); });
+    initResumeModal();
+    document.addEventListener('astro:page-load', function() { pdfDoc = null; initResumeModal(); });
+  })();
 </script>
 
 <style>
