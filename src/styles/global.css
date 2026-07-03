@@ -258,6 +258,7 @@
 .dark .prose thead { color: var(--color-text) !important; }
 .dark .prose td, .dark .prose th { color: var(--color-text) !important; }
 .dark .astro-code, .dark .astro-code code { background-color: var(--shiki-dark-bg) !important; color: var(--shiki-dark) !important; }
+.dark .astro-code .line span { color: var(--shiki-dark) !important; }
 .prose pre code { background: none !important; box-shadow: none !important; padding: 0 !important; }
 .prose a { text-decoration: underline !important; text-underline-offset: 3px !important; }
 .prose img { box-shadow: var(--pixel-shadow) !important; }
