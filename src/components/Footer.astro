@@ -46,9 +46,9 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft);
     </div>
 
     <div class="flex items-center justify-center gap-6 text-xl mb-6 flex-wrap" style="color: var(--color-muted);">
-      <span>★ {projects.length} QUESTS</span>
+      <span>★ {projects.length} PROJECTS</span>
       <span>·</span>
-      <span>★ {posts.length} SCROLLS</span>
+      <span>★ {posts.length} BLOGS</span>
       <span>·</span>
       <span>★ DAY {Math.floor((Date.now() - new Date('2024-01-01').getTime()) / 86400000)}</span>
     </div>
