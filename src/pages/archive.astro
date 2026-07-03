@@ -48,7 +48,7 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
             <ul class="space-y-3">
               {blogByYear[year].map((post) => (
                 <li class="min-h-[44px] flex items-center">
-                    <a href={`/blog/${post.id}`} class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
+                    <a href={`/blog/${post.id}`} data-astro-prefetch="hover" class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
                     {post.data.title}
                   </a>
                   <span class="text-base ml-2" style="color: var(--color-muted)">{formatDate(post.data.date)}</span>
@@ -63,7 +63,7 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
             <ul class="space-y-3">
               {projectsByYear[year].map((project) => (
                 <li class="min-h-[44px] flex items-center">
-                    <a href={`/projects/${project.id}`} class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
+                    <a href={`/projects/${project.id}`} data-astro-prefetch="hover" class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
                     {project.data.title}
                   </a>
                   <span class="text-base ml-2" style="color: var(--color-muted)">{formatDate(project.data.date)}</span>

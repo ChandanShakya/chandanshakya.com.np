@@ -6,7 +6,7 @@ const projects = await getCollection('projects');
 const posts = (await getCollection('blog')).filter(p => !p.data.draft);
 ---
 
-<footer class="py-10 sm:py-12 px-5 text-center" style="border-top: 4px solid var(--color-border); background: var(--color-surface);">
+<footer class="py-10 sm:py-12 px-5 text-center" style="border-top: 4px solid var(--color-border); background: var(--color-surface); content-visibility: auto; contain-intrinsic-size: 0 400px;">
   <div class="max-w-6xl mx-auto">
     <div class="pixel-dialog inline-block mb-8">
       <p class="pixel-xs font-heading mb-2" style="color: var(--color-text);">

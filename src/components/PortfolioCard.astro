@@ -15,7 +15,7 @@ const { title, img, alt, category, slug, commits = 0 } = Astro.props;
 const portfolioImg = getPortfolioImage(img);
 ---
 
-<a href={`/projects/${slug}`} class="group block inventory-slot p-0 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]" style="text-decoration: none;">
+<a href={`/projects/${slug}`} data-astro-prefetch="hover" class="group block inventory-slot p-0 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]" style="text-decoration: none;">
   <div class="relative aspect-[900/650] overflow-hidden" style="background: var(--color-surface);">
     {portfolioImg ? (
       <Image

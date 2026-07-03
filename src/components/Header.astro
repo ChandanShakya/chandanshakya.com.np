@@ -8,22 +8,22 @@ const profileImg = getProfileImage();
 ---
 
 <section class="hero relative min-h-[90vh] flex items-center justify-center overflow-hidden" style="background: var(--color-bg);">
-  <!-- Pixel grid background -->
-  <div class="hero-pixel-grid absolute inset-0"></div>
+  <!-- Pixel grid background — parallax layer 0 -->
+  <div class="hero-pixel-grid absolute inset-0" data-parallax="0.05"></div>
 
-  <!-- Decorative pixel stars -->
-  <div class="pixel-star" style="top: 12%; left: 15%; animation: twinkle 3s ease-in-out infinite;"></div>
-  <div class="pixel-star" style="top: 20%; right: 20%; animation: twinkle 3s ease-in-out 0.5s infinite;"></div>
-  <div class="pixel-star" style="top: 65%; left: 10%; animation: twinkle 3s ease-in-out 1s infinite;"></div>
-  <div class="pixel-star" style="top: 70%; right: 12%; animation: twinkle 3s ease-in-out 1.5s infinite;"></div>
-  <div class="pixel-star" style="top: 35%; left: 5%; animation: twinkle 3s ease-in-out 2s infinite;"></div>
-  <div class="pixel-star" style="top: 45%; right: 8%; animation: twinkle 3s ease-in-out 0.8s infinite;"></div>
+  <!-- Decorative pixel stars — parallax layer 1 -->
+  <div class="pixel-star" data-parallax="0.15" style="top: 12%; left: 15%; animation: twinkle 3s ease-in-out infinite;"></div>
+  <div class="pixel-star" data-parallax="0.25" style="top: 20%; right: 20%; animation: twinkle 3s ease-in-out 0.5s infinite;"></div>
+  <div class="pixel-star" data-parallax="0.1" style="top: 65%; left: 10%; animation: twinkle 3s ease-in-out 1s infinite;"></div>
+  <div class="pixel-star" data-parallax="0.3" style="top: 70%; right: 12%; animation: twinkle 3s ease-in-out 1.5s infinite;"></div>
+  <div class="pixel-star" data-parallax="0.2" style="top: 35%; left: 5%; animation: twinkle 3s ease-in-out 2s infinite;"></div>
+  <div class="pixel-star" data-parallax="0.15" style="top: 45%; right: 8%; animation: twinkle 3s ease-in-out 0.8s infinite;"></div>
 
-  <!-- Pixel art plants — Stardew Valley crop sprites -->
-  <div class="pixel-crop pixel-crop-left" aria-hidden="true"></div>
-  <div class="pixel-crop pixel-crop-right" aria-hidden="true"></div>
-  <div class="pixel-crop pixel-crop-far-left" aria-hidden="true"></div>
-  <div class="pixel-crop pixel-crop-far-right" aria-hidden="true"></div>
+  <!-- Pixel art plants — Stardew Valley crop sprites — parallax layer 2 -->
+  <div class="pixel-crop pixel-crop-left" data-parallax="0.35" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-right" data-parallax="0.35" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-far-left" data-parallax="0.2" aria-hidden="true"></div>
+  <div class="pixel-crop pixel-crop-far-right" data-parallax="0.2" aria-hidden="true"></div>
 
   <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
     <!-- Profile image — pixel art frame -->
@@ -58,7 +58,7 @@ const profileImg = getProfileImage();
       <button data-resume-open class="pixel-btn cursor-pointer">
         ▶ VIEW RESUME
       </button>
-      <a href="/blog" class="pixel-btn-outline" style="text-decoration: none;">
+      <a href="/blog" data-astro-prefetch="hover" class="pixel-btn-outline" style="text-decoration: none;">
         ◆ READ BLOG
       </a>
     </div>
@@ -82,6 +82,7 @@ const profileImg = getProfileImage();
       linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
     background-size: 32px 32px;
     opacity: 0.15;
+    will-change: transform;
   }
 
   .pixel-star {
@@ -90,6 +91,7 @@ const profileImg = getProfileImage();
     height: 8px;
     background: var(--color-secondary);
     opacity: 0.6;
+    will-change: transform;
   }
 
   /* Stardew Valley pixel art crop sprites using box-shadow */

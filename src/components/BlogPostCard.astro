@@ -13,7 +13,7 @@ const { title, description, date, tags = [], slug } = Astro.props;
 ---
 
 <article class="inventory-slot p-4 sm:p-5 mb-4">
-  <a href={`/blog/${slug}`} class="group block">
+  <a href={`/blog/${slug}`} data-astro-prefetch="hover" class="group block">
     <h2 class="pixel-xs sm:pixel-sm font-heading leading-relaxed mb-2 group-hover:text-primary transition-colors" style="color: var(--color-text); text-decoration: none;">
       {title}
     </h2>
@@ -38,7 +38,7 @@ const { title, description, date, tags = [], slug } = Astro.props;
       ))}
     </div>
   )}
-  <a href={`/blog/${slug}`} class="inline-block pixel-xs font-heading text-primary hover:underline min-h-[44px] flex items-center" style="text-decoration: none;">
+  <a href={`/blog/${slug}`} data-astro-prefetch="hover" class="inline-block pixel-xs font-heading text-primary hover:underline min-h-[44px] flex items-center" style="text-decoration: none;">
     READ MORE →
   </a>
 </article>

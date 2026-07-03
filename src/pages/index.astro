@@ -15,7 +15,7 @@ const featured = allProjects.slice(0, 6);
 <BaseLayout>
   <Header />
 
-  <section id="portfolio" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal">
+  <section id="portfolio" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal" style="content-visibility: auto; contain-intrinsic-size: 0 700px;">
     <div class="max-w-6xl mx-auto">
       <h2 class="pixel-md sm:pixel-lg font-heading text-center mb-4" style="color: var(--color-text);">
         ◆ FEATURED QUESTS ◆
@@ -36,7 +36,7 @@ const featured = allProjects.slice(0, 6);
         ))}
       </div>
       <div class="text-center mt-10">
-        <a href="/projects" class="pixel-btn-outline min-h-[48px] inline-flex items-center" style="text-decoration: none;">
+        <a href="/projects" data-astro-prefetch="hover" class="pixel-btn-outline min-h-[48px] inline-flex items-center" style="text-decoration: none;">
           VIEW ALL QUESTS →
         </a>
       </div>

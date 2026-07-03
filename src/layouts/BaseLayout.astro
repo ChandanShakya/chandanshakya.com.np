@@ -24,7 +24,7 @@ const { title, description, type = 'website' } = Astro.props;
     <link rel="apple-touch-icon" href="/img/profile.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="dns-prefetch" href="https://disqus.com" />
     <link rel="dns-prefetch" href="https://formspree.io" />
     <SEO title={title} description={description} type={type} />
@@ -74,6 +74,31 @@ const { title, description, type = 'website' } = Astro.props;
       }
       initScrollReveal();
       document.addEventListener('astro:page-load', initScrollReveal);
+
+      // Parallax on scroll — GPU-accelerated, respects reduced-motion
+      function initParallax() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var elements = document.querySelectorAll('[data-parallax]');
+        if (!elements.length) return;
+        var ticking = false;
+        function onScroll() {
+          if (!ticking) {
+            requestAnimationFrame(function() {
+              var scrollY = window.scrollY;
+              elements.forEach(function(el) {
+                var rate = parseFloat(el.getAttribute('data-parallax'));
+                el.style.transform = 'translate3d(0,' + (scrollY * rate) + 'px,0)';
+              });
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+      initParallax();
+      document.addEventListener('astro:page-load', initParallax);
     </script>
   </body>
 </html>

@@ -16,6 +16,7 @@ import ThemeToggle from './ThemeToggle.astro';
           <a
             href={item.href}
             data-nav-link={item.href}
+            data-astro-prefetch="hover"
             class="text-xl transition-colors min-h-[44px] flex items-center"
             style="color: var(--color-muted); text-decoration: none;"
           >
@@ -39,13 +40,14 @@ import ThemeToggle from './ThemeToggle.astro';
   <input type="checkbox" id="mobile-menu-toggle" class="hidden peer" />
   <div class="sm:hidden hidden peer-checked:block pixel-dialog" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 50;">
     <div class="py-3 space-y-1">
-      {NAVIGATION.map((item) => (
-        <a
-          href={item.href}
-          data-nav-link={item.href}
-          class="block py-3 text-xl min-h-[48px] flex items-center"
-          style="color: var(--color-muted); text-decoration: none;"
-        >
+        {NAVIGATION.map((item) => (
+          <a
+            href={item.href}
+            data-nav-link={item.href}
+            data-astro-prefetch="hover"
+            class="block py-3 text-xl min-h-[48px] flex items-center"
+            style="color: var(--color-muted); text-decoration: none;"
+          >
           {'>'} {item.label}
         </a>
       ))}

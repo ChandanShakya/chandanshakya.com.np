@@ -65,7 +65,7 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="max-w-4xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
     <header class="mb-8">
-      <a href="/projects" class="text-primary hover:underline text-base" style="text-decoration: none;">← BACK TO QUESTS</a>
+      <a href="/projects" data-astro-prefetch="hover" class="text-primary hover:underline text-base" style="text-decoration: none;">← BACK TO QUESTS</a>
       <h1 class="pixel-sm sm:pixel-md font-heading mt-4 mb-3" style="color: var(--color-text);">{title}</h1>
       <div class="flex flex-wrap gap-3 text-base" style="color: var(--color-muted);">
         <span>{projectDate}</span>
