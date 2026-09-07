@@ -11,9 +11,10 @@ interface Props {
   link: string;
   client: string;
   commits?: number;
+  updated?: Date;
 }
 
-const { title, description, date, category, link, client, commits = 0 } = Astro.props;
+const { title, description, date, category, link, client, commits = 0, updated } = Astro.props;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -21,14 +22,25 @@ const jsonLd = {
   name: title,
   description: description,
   dateCreated: date.toISOString(),
+  dateModified: (updated ?? date).toISOString(),
   applicationCategory: category,
   author: person(SITE.author, SITE.siteUrl),
   url: link || `${SITE.siteUrl}${Astro.url.pathname}`,
 };
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Projects', item: `${SITE.siteUrl}/projects` },
+    { '@type': 'ListItem', position: 3, name: title },
+  ],
+};
 ---
 
-<BaseLayout title={`${title} | ${SITE.title}`} description={description}>
+<BaseLayout title={title} description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
   <article>
     <p><a href="/projects">← Back to projects</a></p>
     <h1>{title}</h1>

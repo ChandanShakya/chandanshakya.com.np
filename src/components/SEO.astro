@@ -5,11 +5,13 @@ interface Props {
   title?: string;
   description?: string;
   type?: 'website' | 'article';
+  image?: string;
 }
 
-const { title, description = SITE.description, type = 'website' } = Astro.props;
+const { title, description = SITE.description, type = 'website', image = '/favicon.svg' } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
 const canonicalURL = new URL(Astro.url.pathname, SITE.siteUrl);
+const imageURL = new URL(image, SITE.siteUrl);
 ---
 
 <title>{pageTitle}</title>
@@ -25,7 +27,9 @@ const canonicalURL = new URL(Astro.url.pathname, SITE.siteUrl);
 <meta property="og:description" content={description} />
 <meta property="og:site_name" content={SITE.title} />
 <meta property="og:locale" content="en_US" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content={imageURL} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content={imageURL} />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:site" content={SITE.twitterHandle} />

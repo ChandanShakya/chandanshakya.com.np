@@ -5,9 +5,26 @@ import { SITE } from '../../lib/constants';
 import { formatDate, sortDesc } from '../../lib/utils';
 
 const posts = sortDesc(await getCollection('blog'), (post) => post.data.date.valueOf());
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Blog | ${SITE.title}`,
+  url: `${SITE.siteUrl}/blog`,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: posts.map((post, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE.siteUrl}/blog/${post.id}`,
+      name: post.data.title,
+    })),
+  },
+};
 ---
 
 <BaseLayout title="Blog" description={`Articles by ${SITE.author}`}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Blog</h1>
   <ul class="plain">
     {posts.map((post) => (

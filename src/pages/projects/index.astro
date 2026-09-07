@@ -6,12 +6,29 @@ import { sortDesc } from '../../lib/utils';
 
 const projects = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0);
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Projects | ${SITE.title}`,
+  url: `${SITE.siteUrl}/projects`,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: projects.map((project, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE.siteUrl}/projects/${project.id}`,
+      name: project.data.title,
+    })),
+  },
+};
+
 const categories = [...new Set(
   projects.map((p) => p.data.category.split(',')[0].trim())
 )].sort();
 ---
 
 <BaseLayout title="Projects" description={`Projects by ${SITE.author}`}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Projects</h1>
   <p class="meta">{projects.length} projects across {categories.length} categories</p>
 

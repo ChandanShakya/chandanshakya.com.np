@@ -5,11 +5,38 @@ import About from '../components/About.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
 import { sortDesc } from '../lib/utils';
+import { SITE } from '../lib/constants';
 
 const featured = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0).slice(0, 6);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      url: SITE.siteUrl,
+      name: SITE.title,
+      description: SITE.description,
+      author: { '@type': 'Person', name: SITE.author, url: SITE.siteUrl },
+    },
+    {
+      '@type': 'Person',
+      name: SITE.author,
+      url: SITE.siteUrl,
+      jobTitle: SITE.skills,
+      homeLocation: 'Kathmandu, Nepal',
+      sameAs: [
+        'https://github.com/ChandanShakya',
+        'https://linkedin.com/in/ChandanShakya',
+        'https://twitter.com/ZXY_CC_3ag13',
+      ],
+    },
+  ],
+};
 ---
 
 <BaseLayout>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <Header />
 
   <section>
