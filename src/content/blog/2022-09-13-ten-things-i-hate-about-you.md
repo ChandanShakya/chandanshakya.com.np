@@ -2,7 +2,6 @@
 title: "Quote from 10 Things I Hate About You"
 description: "A heartfelt quote from the movie '10 Things I Hate About You' featuring Kat Stratford's powerful poem about love and hate."
 date: 2022-09-13
-comments: true
 tags: ["quotes", "movies"]
 ---
 

@@ -2,7 +2,6 @@
 title: "How to Handle created_by / updated_by with Laravel Traits"
 description: "Learn how to automate audit field tracking in Laravel models using reusable traits. Clean, maintainable approach for created_by and updated_by fields."
 date: 2026-01-13
-comments: true
 tags: ["laravel", "traits", "audit"]
 ---
 

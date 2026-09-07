@@ -2,7 +2,6 @@
 title: "SQL Conventions for Laravel"
 description: "Comprehensive database naming conventions and best practices for Laravel applications, including table names, columns, keys, and indexing."
 date: 2024-06-26
-comments: true
 tags: ["laravel", "mysql", "database"]
 ---
 

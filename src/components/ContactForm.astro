@@ -2,55 +2,21 @@
 import { FORMSPREE_ENDPOINT } from '../lib/constants';
 ---
 
-<section id="contact" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal" style="content-visibility: auto; contain-intrinsic-size: 0 600px;">
-  <div class="max-w-2xl mx-auto">
-    <h2 class="pixel-md sm:pixel-lg font-heading text-center mb-8" style="color: var(--color-text);">
-      ◆ SEND A MESSAGE ◆
-    </h2>
+<section id="contact">
+  <h2>Send a message</h2>
+  <form action={FORMSPREE_ENDPOINT} method="POST">
+    <label for="name">Your name</label>
+    <input type="text" name="name" id="name" required autocomplete="name" />
 
-    <div class="pixel-dialog">
-      <form action={FORMSPREE_ENDPOINT} method="POST" class="space-y-5">
-        <div>
-          <label for="name" class="block pixel-xs font-heading mb-2" style="color: var(--color-text);">YOUR NAME</label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            required
-            class="pixel-input w-full"
-            placeholder="Enter your name..."
-          />
-        </div>
-        <div>
-          <label for="email" class="block pixel-xs font-heading mb-2" style="color: var(--color-text);">YOUR EMAIL</label>
-          <input
-            type="email"
-            name="_replyto"
-            id="email"
-            required
-            class="pixel-input w-full"
-            placeholder="Enter your email..."
-          />
-        </div>
-        <div>
-          <label for="message" class="block pixel-xs font-heading mb-2" style="color: var(--color-text);">MESSAGE</label>
-          <textarea
-            name="message"
-            id="message"
-            rows="5"
-            required
-            class="pixel-input w-full resize-none"
-            placeholder="Type your message..."
-          ></textarea>
-        </div>
-        <input type="hidden" name="_subject" value="New submission!" />
-        <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
-        <div class="text-center pt-2">
-          <button type="submit" class="pixel-btn cursor-pointer w-full sm:w-auto min-h-[48px]">
-            SEND →
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+    <label for="email">Your email</label>
+    <input type="email" name="_replyto" id="email" required autocomplete="email" />
+
+    <label for="message">Message</label>
+    <textarea name="message" id="message" rows="5" required></textarea>
+
+    <input type="hidden" name="_subject" value="New submission!" />
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" hidden />
+
+    <p><button type="submit">Send</button></p>
+  </form>
 </section>

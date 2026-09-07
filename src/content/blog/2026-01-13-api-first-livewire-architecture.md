@@ -2,7 +2,6 @@
 title: "API-First Livewire Architecture: Building Maintainable Laravel Applications"
 description: "Learn how to implement API-first architecture in Laravel Livewire applications for better maintainability, testability, and scalability."
 date: 2026-01-13
-comments: true
 tags: ["laravel", "livewire", "architecture"]
 ---
 

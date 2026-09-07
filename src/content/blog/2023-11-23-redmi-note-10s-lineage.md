@@ -2,7 +2,6 @@
 title: "Guide changing from MIUI to LineageOS on Redmi Note 10S"
 description: "Complete step-by-step guide to unlock bootloader, install LineageOS recovery, and flash LineageOS on Redmi Note 10S smartphone."
 date: 2023-11-23
-comments: true
 tags: ["android", "lineageos", "redmi"]
 ---
 

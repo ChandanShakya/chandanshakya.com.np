@@ -1,6 +1,6 @@
 # Chandan Shakya — Portfolio & Blog
 
-> Web Developer, Researcher, and Social Engineer from Kathmandu, Nepal. Linux enthusiast with a decade of tinkering experience.
+> Full Stack Web Developer from Kathmandu, Nepal. Linux enthusiast with a decade of tinkering experience.
 
 ## About
 Personal portfolio showcasing projects, blog posts, and technical writing. Built with Astro, styled with Stardew Valley-inspired pixel art aesthetic.

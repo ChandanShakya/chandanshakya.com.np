@@ -1,58 +1,39 @@
 # Chandan Shakya — Portfolio & Blog
 
-Personal portfolio and blog of Chandan Shakya, a Web Developer, Researcher, and Social Engineer from Kathmandu, Nepal. Built with a Stardew Valley-inspired pixel art aesthetic.
+Personal site of Chandan Shakya, a Full Stack Web Developer from Kathmandu, Nepal. Plain static HTML, no frameworks on the client, system fonts only.
 
-## Features
+## What's inside
 
-- Pixel art UI with light/dark themes
-- Project showcase with 27+ projects
-- Technical blog with syntax highlighting (Shiki)
-- PDF resume viewer (PDF.js)
-- Contact form (Formspree)
-- RSS feed, sitemap, SEO meta tags
-- Responsive design, accessible, reduced-motion support
+- Brutalist text-first design, light/dark theme with OS preference + toggle
+- Project list with category filter and commit counts
+- Blog with syntax highlighting, Disqus comments, RSS feed
+- Resume as a direct PDF download, contact form via Formspree
+- Sitemap, canonical URLs, meta/OG tags
 
-## Tech Stack
+## Tech
 
-- [Astro](https://astro.build/) 7 — static site generator
-- [Tailwind CSS](https://tailwindcss.com/) 4 — utility-first styling
-- [Shiki](https://shiki.style/) — syntax highlighting
-- [PDF.js](https://mozilla.github.io/pdf.js/) — PDF rendering
-- [Formspree](https://formspree.io/) — contact form
-- [Disqus](https://disqus.com/) — blog comments
+Astro 7 (static output), hand-written CSS, Shiki, Formspree, Disqus. No Tailwind, no client JS framework, no images.
 
-## Quick Start
+## Run it
 
 ```bash
 bun install
-bun dev
+bun dev        # http://localhost:4321
+bun run build  # static output in dist/
 ```
 
-Open `http://localhost:4321` in your browser.
-
-## Build
-
-```bash
-bun run build
-bun run preview
-```
-
-Output is generated in `dist/` as a fully static site.
-
-## Project Structure
+## Layout
 
 ```
-├── public/              Static assets (images, PDF, headers)
+├── public/          favicon, resume PDF, headers, redirects
 ├── src/
-│   ├── components/      Astro components (Header, About, ResumeModal, etc.)
-│   ├── content/         Blog posts and project markdown files
-│   ├── layouts/         Page layouts
-│   ├── lib/             Utilities and constants
-│   ├── pages/           Route pages
-│   └── styles/          Global CSS
+│   ├── components/  Header, About, ContactForm, Footer, etc.
+│   ├── content/     blog + project markdown
+│   ├── layouts/     Base, Post, Project
+│   ├── lib/         constants, date/sort helpers
+│   ├── pages/       routes (home, blog, projects, archive, 404, rss)
+│   └── styles/      one global.css
 └── astro.config.mjs
 ```
-
-## License
 
 Personal project — all rights reserved.

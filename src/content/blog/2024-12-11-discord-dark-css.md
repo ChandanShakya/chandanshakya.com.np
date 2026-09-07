@@ -2,7 +2,6 @@
 title: "Transforming Discord: A Professional Dark Theme for Enhanced User Experience"
 description: "Custom Discord dark theme with clean, compact design. Learn how to install and enhance your Discord experience with reduced eye strain."
 date: 2024-12-11
-comments: true
 tags: ["discord", "css", "web-design"]
 ---
 

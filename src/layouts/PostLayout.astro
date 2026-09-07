@@ -1,17 +1,16 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import { formatDate } from '../lib/utils';
+import { formatDate, person } from '../lib/utils';
 import { SITE, DISQUS_SHORTNAME } from '../lib/constants';
 
 interface Props {
   title: string;
   description: string;
   date: Date;
-  tags?: string[];
-  comments?: boolean;
+  tags: string[];
 }
 
-const { title, description, date, tags = [], comments = true } = Astro.props;
+const { title, description, date, tags } = Astro.props;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -20,16 +19,8 @@ const jsonLd = {
   description: description,
   datePublished: date.toISOString(),
   dateModified: date.toISOString(),
-  image: `${SITE.siteUrl}/img/profile.webp`,
-  author: {
-    '@type': 'Person',
-    name: SITE.author,
-    url: SITE.siteUrl,
-  },
-  publisher: {
-    '@type': 'Person',
-    name: SITE.author,
-  },
+  author: person(SITE.author, SITE.siteUrl),
+  publisher: person(SITE.author),
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': `${SITE.siteUrl}${Astro.url.pathname}`,
@@ -39,59 +30,40 @@ const jsonLd = {
 
 <BaseLayout title={`${title} | ${SITE.title}`} description={description} type="article">
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <article class="max-w-3xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
-    <header class="mb-8">
-      <a href="/blog" data-astro-prefetch="hover" class="text-primary hover:underline text-base" style="text-decoration: none;">← BACK TO QUESTS</a>
-      <h1 class="pixel-sm sm:pixel-md font-heading mt-4 mb-3" style="color: var(--color-text);">{title}</h1>
-      <time datetime={date.toISOString()} class="text-base" style="color: var(--color-muted)">
-        {formatDate(date)}
-      </time>
-      {tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 mt-3">
-          {tags.map((tag) => (
-            <span class="text-base px-2 py-1" style="background: var(--color-bg); color: var(--color-muted); border: 2px solid var(--color-border);">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-    </header>
-    <div class="prose prose-lg max-w-none dark:prose-invert" style="color: var(--color-text)">
+  <article>
+    <p><a href="/blog">← Back to blog</a></p>
+    <h1>{title}</h1>
+    <p class="meta">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      {` — ${tags.join(', ')}`}
+    </p>
+    <div class="prose">
       <slot />
     </div>
-    {comments && (
-      <footer class="mt-12 pt-8" style="border-top: 1px solid var(--color-border)">
-        <div id="disqus_thread" data-disqus={DISQUS_SHORTNAME}></div>
+    <footer>
+      <hr />
+      <h2>Comments</h2>
+        <div id="disqus_thread" data-shortname={DISQUS_SHORTNAME}></div>
         <script is:inline>
-          function initDisqus() {
-            var disqusThread = document.getElementById('disqus_thread');
-            if (!disqusThread) return;
-            var shortname = disqusThread.dataset.disqus;
-            if (!shortname) return;
-            if (window.DISQUS) {
-              DISQUS.reset({
-                reload: true,
-                config: function() {
-                  this.page.url = window.location.href;
-                  this.page.identifier = window.location.pathname;
-                }
-              });
-            } else {
-              var disqus_config = function() {
-                this.page.url = window.location.href;
-                this.page.identifier = window.location.pathname;
-              };
-              var d = document, s = d.createElement('script');
-              s.src = 'https://' + shortname + '.disqus.com/embed.js';
-              s.setAttribute('data-timestamp', +new Date());
-              (d.head || d.body).appendChild(s);
+          (function () {
+            var thread = document.getElementById('disqus_thread');
+            if (!thread) return;
+            function load() {
+              var s = document.createElement('script');
+              s.src = 'https://' + thread.getAttribute('data-shortname') + '.disqus.com/embed.js';
+              s.async = true;
+              s.setAttribute('data-timestamp', Date.now());
+              document.body.appendChild(s);
             }
-          }
-          document.addEventListener('astro:page-load', initDisqus);
-          initDisqus();
+            if ('IntersectionObserver' in window) {
+              var obs = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) { obs.disconnect(); load(); }
+              }, { rootMargin: '400px' });
+              obs.observe(thread);
+            } else { load(); }
+          })();
         </script>
-        <noscript>Please enable JavaScript to view comments.</noscript>
-      </footer>
-    )}
+      <noscript>Please enable JavaScript to view comments.</noscript>
+    </footer>
   </article>
 </BaseLayout>

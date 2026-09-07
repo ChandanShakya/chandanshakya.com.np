@@ -2,7 +2,6 @@
 title: "Welcome to Chandan Shakya's Blog"
 description: "Welcome to my personal blog where I share insights on web development, Laravel, Linux, and technology. Join me on this journey of learning and sharing."
 date: 2022-09-10
-comments: true
 tags: ["intro", "blog"]
 ---
 

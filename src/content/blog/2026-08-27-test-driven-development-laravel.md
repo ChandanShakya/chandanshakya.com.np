@@ -2,7 +2,6 @@
 title: "Test-Driven Development in Laravel: A Practical Guide to Red-Green-Refactor"
 description: "Learn how to practice TDD in Laravel with PHPUnit — from first principles (Red-Green-Refactor, the Three Laws) to building real features test-first using factories, RefreshDatabase, and feature tests."
 date: 2026-08-27
-comments: true
 tags: ["laravel", "tdd", "testing", "phpunit"]
 ---
 

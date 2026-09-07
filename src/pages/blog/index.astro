@@ -1,29 +1,24 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BlogPostCard from '../../components/BlogPostCard.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../lib/constants';
+import { formatDate, sortDesc } from '../../lib/utils';
 
-const posts = (await getCollection('blog'))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = sortDesc(await getCollection('blog'), (post) => post.data.date.valueOf());
 ---
 
 <BaseLayout title="Blog" description={`Articles by ${SITE.author}`}>
-  <div class="max-w-3xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
-    <h1 class="pixel-md sm:pixel-lg font-heading mb-8" style="color: var(--color-text);">
-      ◆ QUEST BOARD ◆
-    </h1>
-    <div>
-      {posts.map((post) => (
-        <BlogPostCard
-          title={post.data.title}
-          description={post.data.description}
-          date={post.data.date}
-          tags={post.data.tags}
-          slug={post.id}
-        />
-      ))}
-    </div>
-  </div>
+  <h1>Blog</h1>
+  <ul class="plain">
+    {posts.map((post) => (
+      <li>
+        <a href={`/blog/${post.id}`}>{post.data.title}</a>
+        <div class="meta">
+          <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+          {` — ${post.data.tags.join(', ')}`}
+        </div>
+        <p>{post.data.description}</p>
+      </li>
+    ))}
+  </ul>
 </BaseLayout>

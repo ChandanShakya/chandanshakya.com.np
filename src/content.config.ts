@@ -8,9 +8,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-    comments: z.boolean().default(true),
-    draft: z.boolean().default(false),
+    tags: z.array(z.string()),
   }),
 });
 
@@ -20,13 +18,10 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    img: z.string(),
-    alt: z.string(),
     category: z.string(),
-    link: z.string().default(''),
-    client: z.string().default('Public'),
-    projectDate: z.string(),
-    commits: z.number().default(0),
+    link: z.string(),
+    client: z.string(),
+    commits: z.number(),
   }),
 });
 

@@ -2,7 +2,6 @@
 title: "Laravel Livewire Coding Standards: A Comprehensive Guide"
 description: "Complete guide to naming conventions and coding standards for Laravel Livewire v3 applications. Learn best practices for components, validation, and database layers."
 date: 2026-01-13
-comments: true
 tags: ["laravel", "livewire", "coding-standards"]
 ---
 

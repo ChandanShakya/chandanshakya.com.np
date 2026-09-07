@@ -1,82 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import { formatDate } from '../lib/utils';
+import { formatDate, sortDesc } from '../lib/utils';
 import { SITE } from '../lib/constants';
 
-const allPosts = await getCollection('blog');
-const allProjects = await getCollection('projects');
+const blogPosts = sortDesc(await getCollection('blog'), (p) => p.data.date.valueOf());
+const projects = sortDesc(await getCollection('projects'), (p) => p.data.date.valueOf());
 
-const blogPosts = allPosts
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const projects = allProjects.sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
-
-// Group by year
-const blogByYear = blogPosts.reduce((acc, post) => {
-  const year = post.data.date.getFullYear().toString();
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(post);
-  return acc;
-}, {} as Record<string, typeof blogPosts>);
-
-const projectsByYear = projects.reduce((acc, project) => {
-  const year = project.data.date.getFullYear().toString();
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(project);
-  return acc;
-}, {} as Record<string, typeof projects>);
+const byYear = <T extends { data: { date: Date } }>(items: T[]) => {
+  const groups: Record<string, T[]> = {};
+  for (const item of items) (groups[item.data.date.getFullYear()] ??= []).push(item);
+  return groups;
+};
+const blogByYear = byYear(blogPosts);
+const projectsByYear = byYear(projects);
 
 const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsByYear)])].sort().reverse();
 ---
 
 <BaseLayout title="Archive" description={`Archive of all posts and projects by ${SITE.author}`}>
-  <div class="max-w-3xl mx-auto px-5 py-12 sm:py-16 lg:py-20">
-    <h1 class="pixel-md sm:pixel-lg font-heading mb-12" style="color: var(--color-text);">
-      ◆ ARCHIVE ◆
-    </h1>
-    {years.map((year, index) => (
-      <>
-      <div class="mb-10">
-        <h2 class="pixel-xs sm:pixel-sm font-heading mb-4" style="color: var(--color-text);">{year}</h2>
-        {blogByYear[year] && (
-          <div class="mb-6">
-            <h3 class="text-base font-medium mb-2" style="color: var(--color-muted)">Blog Posts</h3>
-            <ul class="space-y-3">
-              {blogByYear[year].map((post) => (
-                <li class="min-h-[44px] flex items-center">
-                    <a href={`/blog/${post.id}`} data-astro-prefetch="hover" class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
-                    {post.data.title}
-                  </a>
-                  <span class="text-base ml-2" style="color: var(--color-muted)">{formatDate(post.data.date)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {projectsByYear[year] && (
-          <div>
-            <h3 class="text-base font-medium mb-2" style="color: var(--color-muted)">Projects</h3>
-            <ul class="space-y-3">
-              {projectsByYear[year].map((project) => (
-                <li class="min-h-[44px] flex items-center">
-                    <a href={`/projects/${project.id}`} data-astro-prefetch="hover" class="text-lg hover:text-primary transition-colors" style="color: var(--color-text)">
-                    {project.data.title}
-                  </a>
-                  <span class="text-base ml-2" style="color: var(--color-muted)">{formatDate(project.data.date)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-      {index < years.length - 1 && (
-        <hr class="my-8" style="border: none; border-top: 4px solid var(--color-border);" />
-      )}
-      </>
-    ))}
-  </div>
+  <h1>Archive</h1>
+  {years.map((year, i) => (
+    <section>
+      {i > 0 && <hr />}
+      <h2>{year}</h2>
+      {[
+        { label: 'Blog posts', base: 'blog', items: blogByYear[year] },
+        { label: 'Projects', base: 'projects', items: projectsByYear[year] },
+      ].filter((s) => s.items).map((s) => (
+        <>
+          <h3>{s.label}</h3>
+          <ul class="plain">
+            {s.items.map((item) => (
+              <li>
+                <a href={`/${s.base}/${item.id}`}>{item.data.title}</a>
+                {' '}<span class="meta">{formatDate(item.data.date)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))}
+    </section>
+  ))}
 </BaseLayout>

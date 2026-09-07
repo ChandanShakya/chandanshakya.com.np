@@ -2,7 +2,6 @@
 title: "Comprehensive Guide to Obtaining a Car Driving License in Nepal"
 description: "Step-by-step guide to get a car driving license in Nepal. Covers eligibility, online application, theoretical and practical exams, and preparation tips."
 date: 2025-10-12
-comments: true
 tags: ["nepal", "driving-license", "guide"]
 ---
 

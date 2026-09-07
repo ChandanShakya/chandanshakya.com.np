@@ -1,48 +1,39 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import PortfolioCard from '../components/PortfolioCard.astro';
 import About from '../components/About.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
+import { sortDesc } from '../lib/utils';
 
-const allProjects = (await getCollection('projects')).sort(
-  (a, b) => (b.data.commits || 0) - (a.data.commits || 0)
-);
-const featured = allProjects.slice(0, 6);
+const featured = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0).slice(0, 6);
 ---
 
 <BaseLayout>
   <Header />
 
-  <section id="portfolio" class="py-12 sm:py-16 lg:py-20 px-5 scroll-reveal" style="content-visibility: auto; contain-intrinsic-size: 0 700px;">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="pixel-md sm:pixel-lg font-heading text-center mb-4" style="color: var(--color-text);">
-        ◆ FEATURED QUESTS ◆
-      </h2>
-      <p class="text-center mb-12 text-xl" style="color: var(--color-muted);">
-        Top projects by commit activity
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {featured.map((project) => (
-          <PortfolioCard
-            title={project.data.title}
-            img={project.data.img}
-            alt={project.data.alt}
-            category={project.data.category}
-            slug={project.id}
-            commits={project.data.commits}
-          />
-        ))}
-      </div>
-      <div class="text-center mt-10">
-        <a href="/projects" data-astro-prefetch="hover" class="pixel-btn-outline min-h-[48px] inline-flex items-center" style="text-decoration: none;">
-          VIEW ALL QUESTS →
-        </a>
-      </div>
-    </div>
+  <section>
+    <h2>Featured projects</h2>
+    <p class="meta">Top projects by commit activity</p>
+    <ul class="plain">
+      {featured.map((project) => (
+        <li>
+          <a href={`/projects/${project.id}`}>{project.data.title}</a>
+          <span class="meta">
+            {' '}— {project.data.category}
+            {(project.data.commits || 0) > 0 ? ` (★ ${project.data.commits.toLocaleString()})` : ''}
+          </span>
+        </li>
+      ))}
+    </ul>
+    <p><a href="/projects">View all projects →</a></p>
   </section>
 
+  <hr />
+
   <About />
+
+  <hr />
+
   <ContactForm />
 </BaseLayout>
