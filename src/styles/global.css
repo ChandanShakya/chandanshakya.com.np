@@ -1,5 +1,9 @@
 /* Brutalist, no-framework styles. System fonts only, zero webfont downloads. */
 
+@view-transition {
+  navigation: auto;
+}
+
 :root, html[data-theme="light"] {
   --bg: #ffffff;
   --fg: #111111;

@@ -30,6 +30,11 @@ const { title, description, type = 'website' } = Astro.props;
         }
       } catch (e) {}
     </script>
+    <script type="speculationrules">
+      {
+        "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }]
+      }
+    </script>
   </head>
   <body>
     <a href="#main-content" class="skip">Skip to content</a>
