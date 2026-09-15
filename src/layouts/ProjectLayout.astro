@@ -10,11 +10,10 @@ interface Props {
   category: string;
   link: string;
   client: string;
-  commits?: number;
   updated?: Date;
 }
 
-const { title, description, date, category, link, client, commits = 0, updated } = Astro.props;
+const { title, description, date, category, link, client, updated } = Astro.props;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -48,7 +47,6 @@ const breadcrumb = {
       <time datetime={date.toISOString()}>{formatDate(date)}</time>
       {` — ${category}`}
       {client !== 'Public' ? ` — Client: ${client}` : ''}
-      {commits > 0 ? ` — ★ ${commits.toLocaleString()}` : ''}
     </p>
     <div class="prose">
       <p>{description}</p>

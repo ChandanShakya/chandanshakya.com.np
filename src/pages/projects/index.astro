@@ -43,10 +43,7 @@ const categories = [...new Set(
     {projects.map((project) => (
       <li data-categories={project.data.category}>
         <a href={`/projects/${project.id}`}>{project.data.title}</a>
-        <span class="meta">
-          {' '}— {project.data.category}
-          {(project.data.commits || 0) > 0 ? ` (★ ${project.data.commits.toLocaleString()})` : ''}
-        </span>
+        <span class="meta">{' '}— {project.data.category}</span>
       </li>
     ))}
   </ul>
