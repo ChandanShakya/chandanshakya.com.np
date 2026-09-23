@@ -4,9 +4,7 @@ import { readFileSync } from 'node:fs';
 
 export default defineConfig({
   site: 'https://chandanshakya.com.np',
-  prefetch: {
-    defaultStrategy: 'hover',
-  },
+  prefetch: false,
   integrations: [
     sitemap({
       serialize(item) {

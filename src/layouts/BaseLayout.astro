@@ -30,9 +30,13 @@ const { title, description, type = 'website' } = Astro.props;
         }
       } catch (e) {}
     </script>
+    <link rel="preconnect" href="https://formspree.io" crossorigin />
     <script type="speculationrules">
       {
-        "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }]
+        "prerender": [
+          { "where": { "href_matches": "/projects/*" }, "eagerness": "conservative" },
+          { "where": { "href_matches": "/blog/*" }, "eagerness": "conservative" }
+        ]
       }
     </script>
   </head>
@@ -49,6 +53,7 @@ const { title, description, type = 'website' } = Astro.props;
         function label() {
           var dark = document.documentElement.getAttribute('data-theme') === 'dark';
           btn.textContent = dark ? 'light mode' : 'dark mode';
+          btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
         }
         label();
         btn.addEventListener('click', function () {
