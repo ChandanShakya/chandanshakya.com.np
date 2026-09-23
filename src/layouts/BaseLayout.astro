@@ -2,7 +2,7 @@
 import SEO from '../components/SEO.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import '../styles/global.css';
+import globalCss from '../styles/global.css?inline';
 
 interface Props {
   title?: string;
@@ -20,6 +20,7 @@ const { title, description, type = 'website' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <SEO title={title} description={description} type={type} />
+    <style is:inline set:html={globalCss} />
     <script is:inline>
       try {
         var t = localStorage.getItem('theme');
@@ -30,7 +31,6 @@ const { title, description, type = 'website' } = Astro.props;
         }
       } catch (e) {}
     </script>
-    <link rel="preconnect" href="https://formspree.io" crossorigin />
     <script type="speculationrules">
       {
         "prerender": [
