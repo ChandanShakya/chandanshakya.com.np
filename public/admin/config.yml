@@ -1,0 +1,43 @@
+backend:
+  name: github
+  repo: ChandanShakya/chandanshakya.com.np
+  branch: main
+  base_url: https://sveltia-cms-auth.zxy-cc-3ag13.workers.dev
+
+media_folder: public/uploads
+public_folder: /uploads
+omit_empty_optional_fields: true
+
+collections:
+  - name: blog
+    label: Blog
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+      - { name: updated, label: Updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { name: tags, label: Tags, widget: list, default: [] }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: projects
+    label: Projects
+    folder: src/content/projects
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+      - { name: updated, label: Updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { name: category, label: Category, widget: string }
+      - { name: link, label: Link, widget: string }
+      - { name: client, label: Client, widget: string }
+      - { name: commits, label: Commits, widget: number, value_type: int }
+      - { name: body, label: Body, widget: markdown }
