@@ -25,6 +25,10 @@ const jsonLd = {
 const categories = [...new Set(
   projects.map((p) => p.data.category.split(',')[0].trim())
 )].sort();
+
+function fmtCommits(n: number): string {
+  return `${n.toLocaleString('en-US')} ${n === 1 ? 'commit' : 'commits'}`;
+}
 ---
 
 <BaseLayout title="Projects" description={`Projects by ${SITE.author}`}>
@@ -44,6 +48,7 @@ const categories = [...new Set(
       <li data-categories={project.data.category}>
         <a href={`/projects/${project.id}`}>{project.data.title}</a>
         <span class="meta">{' '}— {project.data.category}</span>
+        <span class="commit-badge">{fmtCommits(project.data.commits || 0)}</span>
       </li>
     ))}
   </ul>

@@ -126,6 +126,24 @@ button, .btn {
 }
 button:hover, .btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
 
+/* Commit badge (project lists) */
+.commit-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  background: var(--panel);
+  border: 2px solid var(--border);
+  box-shadow: 2px 2px 0 var(--border);
+  padding: 0.05rem 0.45rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
 /* Filter buttons (projects page, tiny progressive-enhancement JS) */
 .filter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
 .filter-btn { background: var(--bg); color: var(--fg); padding: 0.5rem 0.8rem; font-size: 0.9rem; }

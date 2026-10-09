@@ -3,11 +3,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import About from '../components/About.astro';
 import ContactForm from '../components/ContactForm.astro';
+import CommitsChart from '../components/CommitsChart.astro';
 import { getCollection } from 'astro:content';
 import { sortDesc } from '../lib/utils';
 import { SITE } from '../lib/constants';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-const featured = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0).slice(0, 6);
+const allProjects = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0);
+const featured = allProjects.slice(0, 6);
+const chartData = allProjects.map((p) => ({
+  id: p.id,
+  title: p.data.title,
+  commits: p.data.commits || 0,
+}));
+
+// Weekly history for the over-time chart. Missing/empty file falls
+// back to snapshot bars inside CommitsChart.
+let commitHistory = null;
+try {
+  const raw = readFileSync(join(process.cwd(), 'src/data/commit-history.json'), 'utf8');
+  const parsed = JSON.parse(raw);
+  if (parsed && Array.isArray(parsed.weeks) && parsed.weeks.length > 0) {
+    commitHistory = parsed;
+  }
+} catch {
+  commitHistory = null;
+}
+
+function fmtCommits(n: number): string {
+  return `${n.toLocaleString('en-US')} ${n === 1 ? 'commit' : 'commits'}`;
+}
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -47,11 +73,16 @@ const jsonLd = {
         <li>
           <a href={`/projects/${project.id}`}>{project.data.title}</a>
           <span class="meta">{' '}— {project.data.category}</span>
+          <span class="commit-badge">{fmtCommits(project.data.commits || 0)}</span>
         </li>
       ))}
     </ul>
     <p><a href="/projects">View all projects →</a></p>
   </section>
+
+  <hr />
+
+  <CommitsChart projects={chartData} history={commitHistory} />
 
   <hr />
 

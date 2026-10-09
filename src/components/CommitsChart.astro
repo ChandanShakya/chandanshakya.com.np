@@ -1,0 +1,458 @@
+---
+interface ChartItem {
+  id: string;
+  title: string;
+  commits: number;
+}
+
+interface HistoryWeek {
+  week: number;
+  total: number;
+  repos: Record<string, number>;
+}
+
+interface HistoryData {
+  generatedAt: string;
+  weeks: HistoryWeek[];
+}
+
+interface Props {
+  projects: ChartItem[];
+  history?: HistoryData | null;
+  topN?: number;
+}
+
+const { projects, history = null, topN = 12 } = Astro.props;
+
+function fmt(n: number): string {
+  return n.toLocaleString('en-US');
+}
+
+// --- Snapshot fallback (per-project totals) ---
+const sorted = [...projects].sort((a, b) => b.commits - a.commits);
+const top = sorted.slice(0, topN);
+const rest = sorted.slice(topN);
+const othersCommits = rest.reduce((sum, p) => sum + p.commits, 0);
+const hasOthers = rest.length > 0;
+
+interface Bar extends ChartItem {
+  isOthers?: boolean;
+  count?: number;
+}
+
+const bars: Bar[] = [...top];
+if (hasOthers) {
+  bars.push({ id: '__others__', title: `Others (${rest.length} more)`, commits: othersCommits, isOthers: true, count: rest.length });
+}
+
+const max = Math.max(...bars.map((b) => b.commits), 1);
+const total = sorted.reduce((sum, p) => sum + p.commits, 0);
+
+// --- Over-time mode (weekly history) ---
+const TIME_TOP = 8;
+const hasHistory = !!history && history.weeks.length > 0;
+
+interface Series extends ChartItem {
+  isOthers?: boolean;
+  count?: number;
+  weekly: number[];
+  windowTotal: number;
+}
+
+let series: Series[] = [];
+let weekMax = 1;
+let windowTotal = 0;
+let windowProjects = 0;
+let monthMarks: { index: number; label: string }[] = [];
+
+if (hasHistory) {
+  const weeks = history!.weeks.slice(-52);
+  const titleById = new Map(projects.map((p) => [p.id, p.title]));
+  const topIds = sorted.slice(0, TIME_TOP).map((p) => p.id);
+  const topSet = new Set(topIds);
+
+  const othersSlugs = new Set<string>();
+  for (const w of weeks) {
+    for (const slug of Object.keys(w.repos)) {
+      if (!topSet.has(slug) && (w.repos[slug] || 0) > 0) othersSlugs.add(slug);
+    }
+  }
+
+  series = topIds.map((id) => {
+    const weekly = weeks.map((w) => w.repos[id] || 0);
+    return {
+      id,
+      title: titleById.get(id) ?? id,
+      commits: sorted.find((p) => p.id === id)?.commits ?? 0,
+      weekly,
+      windowTotal: weekly.reduce((a, b) => a + b, 0),
+    };
+  });
+
+  const othersWeekly = weeks.map((w) => {
+    let n = 0;
+    for (const slug of othersSlugs) n += w.repos[slug] || 0;
+    return n;
+  });
+  if (othersSlugs.size > 0) {
+    series.push({
+      id: '__others__',
+      title: `Others (${othersSlugs.size} more)`,
+      commits: 0,
+      isOthers: true,
+      count: othersSlugs.size,
+      weekly: othersWeekly,
+      windowTotal: othersWeekly.reduce((a, b) => a + b, 0),
+    });
+  }
+
+  weekMax = Math.max(...weeks.map((w) => w.total), 1);
+  windowTotal = series.reduce((a, s) => a + s.windowTotal, 0);
+  windowProjects = series.reduce(
+    (a, s) => a + (s.isOthers ? (s.count ?? 0) : s.windowTotal > 0 ? 1 : 0),
+    0
+  );
+
+  let lastMonth = '';
+  weeks.forEach((w, i) => {
+    const d = new Date(w.week * 1000);
+    const label = d.toLocaleString('en-US', { month: 'short' });
+    if (label !== lastMonth) {
+      monthMarks.push({ index: i, label });
+      lastMonth = label;
+    }
+  });
+}
+
+const weekTotals: number[] = hasHistory
+  ? history!.weeks.slice(-52).map((w) => w.total)
+  : [];
+---
+
+<section class="commits-chart" id="commit-activity" aria-labelledby="commit-activity-heading">
+  <h2 id="commit-activity-heading">Commit activity</h2>
+
+  {hasHistory ? (
+    <p class="meta" id="commits-total">
+      {fmt(windowTotal)} commits in the last 52 weeks across {fmt(windowProjects)} projects
+    </p>
+    <div
+      class="time-plot"
+      role="img"
+      aria-label={`Stacked weekly commits. Peak week ${fmt(weekMax)} commits. Total ${fmt(windowTotal)} commits over 52 weeks.`}
+    >
+      {weekTotals.map((wt, i) => {
+        const colH = wt > 0 ? Math.max((wt / weekMax) * 100, 2) : 0;
+        return (
+          <div
+            class="week"
+            data-week={i}
+            style={`--h: ${colH.toFixed(2)}%; --d: ${Math.min(i * 12, 600)}ms`}
+            title={`Week ${i + 1}: ${fmt(wt)} commits`}
+          >
+            {series.map((s, si) => {
+              const n = s.weekly[i];
+              if (!n || wt === 0) return null;
+              return (
+                <div
+                  class={`seg seg-${si}`}
+                  data-seg={s.id}
+                  style={`--sh: ${(n / wt * 100).toFixed(2)}%`}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+    <div class="x-axis" aria-hidden="true">
+      {weekTotals.map((_, i) => {
+        const mark = monthMarks.find((m) => m.index === i);
+        return <span class="x-tick">{mark ? mark.label : ''}</span>;
+      })}
+    </div>
+    <p class="meta y-note">Peak week: {fmt(weekMax)} commits</p>
+    <div class="chart-legend" id="chart-legend" role="group" aria-label="Toggle projects in chart">
+      {series.map((s, si) => (
+        <button
+          type="button"
+          class="legend-btn"
+          data-legend={s.id}
+          data-n={s.windowTotal}
+          data-projects={s.isOthers ? (s.count ?? 0) : 1}
+          aria-pressed="true"
+          title={`${s.title} — ${fmt(s.windowTotal)} commits in window`}
+        >
+          <span class={`legend-swatch seg-${si}`} aria-hidden="true" />
+          {s.title}
+        </button>
+      ))}
+    </div>
+  ) : (
+    <p class="meta" id="commits-total" data-total={total} data-count={sorted.length}>
+      {fmt(total)} commits across {sorted.length} projects
+    </p>
+    <div class="chart-bars" id="chart-bars">
+      {bars.map((bar) => (
+        <div class="bar-row" data-bar={bar.id} data-commits={bar.commits} data-projects={bar.isOthers ? bar.count : 1}>
+          <div class="bar-label">
+            <span class="bar-name">{bar.title}</span>
+            <span class="bar-count meta">{fmt(bar.commits)} commits</span>
+          </div>
+          <div class="bar-track" role="img" aria-label={`${bar.title}: ${fmt(bar.commits)} commits`}>
+            <div
+              class="bar-fill"
+              style={`--w: ${(bar.commits / max * 100).toFixed(2)}%`}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="chart-legend" id="chart-legend" role="group" aria-label="Toggle projects in chart">
+      {bars.map((bar) => (
+        <button
+          type="button"
+          class="legend-btn"
+          data-legend={bar.id}
+          aria-pressed="true"
+          title={`${bar.title} — ${fmt(bar.commits)} commits`}
+        >
+          <span class="legend-swatch" aria-hidden="true" />
+          {bar.title}
+        </button>
+      ))}
+    </div>
+  )}
+</section>
+
+<script is:inline>
+  (function () {
+    var section = document.getElementById('commit-activity');
+    if (!section) return;
+    var totalEl = document.getElementById('commits-total');
+    var legend = document.getElementById('chart-legend');
+    if (!totalEl || !legend) return;
+
+    function fmt(n) { return n.toLocaleString('en-US'); }
+
+    // Animate on scroll into view
+    function reveal() { section.classList.add('in-view'); }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { reveal(); io.disconnect(); }
+        });
+      }, { threshold: 0.2 });
+      io.observe(section);
+    } else {
+      reveal();
+    }
+
+    function esc(id) {
+      return (window.CSS && CSS.escape) ? CSS.escape(id) : id.replace(/["\\]/g, '');
+    }
+
+    // Over-time mode: toggle stacked series
+    var plot = section.querySelector('.time-plot');
+    if (plot) {
+      var buttons = Array.prototype.slice.call(legend.querySelectorAll('.legend-btn'));
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-legend');
+          var on = btn.getAttribute('aria-pressed') === 'true';
+          btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+          var segs = plot.querySelectorAll('[data-seg="' + esc(id) + '"]');
+          segs.forEach(function (s) { s.hidden = on; });
+          var sum = 0, projectCount = 0;
+          buttons.forEach(function (b) {
+            if (b.getAttribute('aria-pressed') !== 'true') return;
+            sum += parseInt(b.getAttribute('data-n') || '0', 10);
+            projectCount += parseInt(b.getAttribute('data-projects') || '1', 10);
+          });
+          if (sum === 0) {
+            totalEl.textContent = 'All hidden — toggle a project to show commits';
+          } else {
+            totalEl.textContent = fmt(sum) + ' commits in the last 52 weeks across ' + fmt(projectCount) + ' projects';
+          }
+        });
+      });
+      return;
+    }
+
+    // Snapshot mode: toggle bars
+    var barsEl = document.getElementById('chart-bars');
+    if (!barsEl) return;
+    var rows = Array.prototype.slice.call(barsEl.querySelectorAll('.bar-row'));
+    var snapBtns = Array.prototype.slice.call(legend.querySelectorAll('.legend-btn'));
+    snapBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-legend');
+        var on = btn.getAttribute('aria-pressed') === 'true';
+        btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+        var row = barsEl.querySelector('[data-bar="' + esc(id) + '"]');
+        if (row) row.hidden = on;
+        var sum = 0, projectCount = 0;
+        rows.forEach(function (r) {
+          if (!r.hidden) {
+            sum += parseInt(r.getAttribute('data-commits') || '0', 10);
+            projectCount += parseInt(r.getAttribute('data-projects') || '1', 10);
+          }
+        });
+        if (sum === 0) {
+          totalEl.textContent = 'All hidden — toggle a project to show commits';
+        } else {
+          totalEl.textContent = fmt(sum) + ' commits across ' + fmt(projectCount) + ' projects';
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .commits-chart {
+    border: var(--border-width) solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.25rem 1.4rem;
+    margin: 2rem 0;
+    background: var(--bg);
+  }
+  .commits-chart h2 { margin: 0 0 0.25rem; }
+  .commits-chart .meta { margin: 0 0 1rem; }
+
+  /* Snapshot bars */
+  .chart-bars { display: grid; gap: 0.8rem; margin-bottom: 1.25rem; }
+  .bar-row[hidden] { display: none; }
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.3rem;
+  }
+  .bar-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bar-count { white-space: nowrap; flex-shrink: 0; }
+  .bar-track {
+    border: 2px solid var(--border);
+    background: var(--panel);
+    height: 1.5rem;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0;
+    background: var(--fg);
+    transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .in-view .bar-fill { width: var(--w); }
+
+  /* Over-time stacked weeks */
+  .time-plot {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 12rem;
+    border: 2px solid var(--border);
+    background: var(--panel);
+    padding: 0.5rem 0.5rem 0;
+    margin-bottom: 0.25rem;
+  }
+  .week {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 0;
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: height 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s ease;
+    transition-delay: var(--d, 0ms);
+  }
+  .in-view .week { height: var(--h); transform: scaleY(1); }
+  .seg { width: 100%; height: var(--sh); }
+  .seg[hidden] { display: none; }
+  .seg-0 { background: #2563eb; }
+  .seg-1 { background: #dc2626; }
+  .seg-2 { background: #16a34a; }
+  .seg-3 { background: #d97706; }
+  .seg-4 { background: #7c3aed; }
+  .seg-5 { background: #0891b2; }
+  .seg-6 { background: #db2777; }
+  .seg-7 { background: #65a30d; }
+  .seg-8 {
+    background: repeating-linear-gradient(45deg, var(--muted) 0 3px, transparent 3px 6px);
+    border-top: 1px solid var(--muted);
+  }
+  .x-axis {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 1rem;
+  }
+  .x-tick {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: visible;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .y-note { margin-top: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-fill, .week { transition: none; }
+    .in-view .bar-fill { width: var(--w); }
+    .week { transform: none; }
+    .in-view .week { height: var(--h); }
+  }
+
+  /* Legend (both modes) */
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .legend-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--bg);
+    color: var(--fg);
+    border: 2px solid var(--border);
+    box-shadow: 3px 3px 0 var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    border-radius: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+  }
+  .legend-btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+  .legend-swatch {
+    width: 0.8rem;
+    height: 0.8rem;
+    background: var(--fg);
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .legend-swatch.seg-0, .legend-swatch.seg-1, .legend-swatch.seg-2,
+  .legend-swatch.seg-3, .legend-swatch.seg-4, .legend-swatch.seg-5,
+  .legend-swatch.seg-6, .legend-swatch.seg-7, .legend-swatch.seg-8 {
+    border-color: var(--border);
+  }
+  .legend-btn[aria-pressed="false"] { opacity: 0.45; }
+  .legend-btn[aria-pressed="false"] .legend-swatch { background: transparent; }
+</style>
