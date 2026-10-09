@@ -478,6 +478,11 @@ if (hasHistory) {
         return parseInt(parts[0], 10) * 12 + (parseInt(parts[1], 10) - 1);
       }
 
+      function monthFull(key) {
+        return new Date(Math.floor(key / 12), key % 12, 1)
+          .toLocaleString('en-US', { month: 'short', year: 'numeric' });
+      }
+
       function currentFrame() {
         var monthlyMode = view === '12m';
         var targetKey;
@@ -487,7 +492,7 @@ if (hasHistory) {
         } else if (view === 'pick' && pickSelect) {
           targetKey = keyOfValue(pickSelect.value);
         }
-        var labels, idx;
+        var labels, idx, targetLabel = '';
         if (monthlyMode) {
           labels = monthLabels.slice();
           idx = null;
@@ -497,6 +502,10 @@ if (hasHistory) {
           weekStamps.forEach(function (s, j) {
             if (monthKeyOf(s) === targetKey) { idx.push(j); labels.push(weekLabel(s)); }
           });
+          targetLabel = monthFull(targetKey);
+          if (pickSelect && view === 'pick' && pickSelect.selectedOptions.length) {
+            targetLabel = pickSelect.selectedOptions[0].textContent;
+          }
         }
         var cols = buttons.map(function (b) {
           var full = monthlyMode
@@ -505,13 +514,29 @@ if (hasHistory) {
           var arr = monthlyMode ? full.slice() : idx.map(function (j) { return full[j] || 0; });
           return { id: b.getAttribute('data-legend'), arr: arr, btn: b };
         });
-        return { labels: labels, cols: cols, monthlyMode: monthlyMode };
+        // Weekly views: pad domain with zero anchors at both edges so the
+        // stacked area always has width. A month with one data point
+        // otherwise collapses to a single vertical line. Anchors carry no
+        // label and no commits, so totals and badges stay exact.
+        var real = null, realCount = labels.length, emptyMonth = false;
+        if (!monthlyMode) {
+          if (idx.length === 0) {
+            emptyMonth = true;
+            cols = cols.map(function (c) { return { id: c.id, arr: [], btn: c.btn }; });
+            labels = [];
+          } else {
+            real = [false].concat(idx.map(function () { return true; }), [false]);
+            labels = [''].concat(labels, ['']);
+            cols = cols.map(function (c) { return { id: c.id, arr: [0].concat(c.arr, [0]), btn: c.btn }; });
+          }
+          realCount = idx.length;
+        }
+        return { labels: labels, cols: cols, monthlyMode: monthlyMode, weekly: !monthlyMode, real: real, realCount: realCount, emptyMonth: emptyMonth, targetLabel: targetLabel };
       }
 
       function render() {
         var frame = currentFrame();
         var m = frame.monthlyMode ? monthCount : frame.labels.length;
-        if (!m) return;
         hideTip();
         // Per-series view totals -> badges + data-n
         frame.cols.forEach(function (c) {
@@ -546,6 +571,7 @@ if (hasHistory) {
           svg.appendChild(g);
         });
         var cum = new Array(m).fill(0);
+        var dots = [];
         visible.forEach(function (c) {
           var idx = c.btn.getAttribute('data-idx') || '0';
           var top = [], bot = [];
@@ -560,6 +586,23 @@ if (hasHistory) {
           path.setAttribute('data-area', c.id);
           path.setAttribute('d', areaPath(top, bot));
           svg.appendChild(path);
+          // Dot markers on real (non-anchor) points so single-point and
+          // sparse months read clearly. Zero values skipped to cut clutter.
+          if (frame.weekly) {
+            for (var k = 0; k < m; k++) {
+              if (frame.real && !frame.real[k]) continue;
+              if ((c.arr[k] || 0) <= 0) continue;
+              dots.push({ x: top[k].x, y: top[k].y, idx: idx });
+            }
+          }
+        });
+        dots.forEach(function (dt) {
+          var c = document.createElementNS(NS, 'circle');
+          c.setAttribute('class', 'dot dot-' + dt.idx);
+          c.setAttribute('cx', dt.x);
+          c.setAttribute('cy', dt.y);
+          c.setAttribute('r', 5);
+          svg.appendChild(c);
         });
         frame.labels.forEach(function (label, j) {
           var tx = document.createElementNS(NS, 'text');
@@ -579,24 +622,26 @@ if (hasHistory) {
         var rangeText;
         if (frame.monthlyMode) {
           rangeText = 'in the last ' + monthCount + ' months';
+        } else if (frame.emptyMonth) {
+          rangeText = 'in ' + frame.targetLabel;
         } else {
-          var opt = pickSelect && pickSelect.selectedOptions.length
-            ? pickSelect.selectedOptions[0].textContent
-            : weekLabel(weekStamps[weekStamps.length - 1]);
-          rangeText = 'in ' + opt + ' (' + m + (m === 1 ? ' week)' : ' weeks)');
+          rangeText = 'in ' + frame.targetLabel + ' (' + frame.realCount + (frame.realCount === 1 ? ' week)' : ' weeks)');
         }
-        if (sum === 0) {
+        if (frame.emptyMonth && sum === 0) {
+          totalEl.textContent = 'No commits ' + rangeText;
+        } else if (sum === 0) {
           totalEl.textContent = 'All hidden — toggle a project to show commits';
         } else {
           totalEl.textContent = fmt(sum) + ' commits ' + rangeText + ' across ' + fmt(projectCount) + ' projects';
         }
+        var peakShown = frame.emptyMonth ? 0 : peak;
         if (peakNote) {
           peakNote.textContent = frame.monthlyMode
-            ? 'Peak month: ' + fmt(peak) + ' commits'
-            : 'Peak week: ' + fmt(peak) + ' commits';
+            ? 'Peak month: ' + fmt(peakShown) + ' commits'
+            : 'Peak week: ' + fmt(peakShown) + ' commits';
         }
         if (wrap) {
-          wrap.setAttribute('aria-label', 'Stacked commits ' + rangeText + '. Peak ' + fmt(peak) + ' commits. Total ' + fmt(sum) + ' commits.');
+          wrap.setAttribute('aria-label', 'Stacked commits ' + rangeText + '. Peak ' + fmt(peakShown) + ' commits. Total ' + fmt(sum) + ' commits.');
         }
         storeFrame(frame, visible, m);
       }
@@ -613,6 +658,7 @@ if (hasHistory) {
         lastFrame = {
           labels: frame.labels.slice(),
           m: m,
+          real: frame.real ? frame.real.slice() : null,
           rows: visible.map(function (c) {
             var lbl = c.btn.querySelector('.legend-label');
             return {
@@ -623,10 +669,21 @@ if (hasHistory) {
           })
         };
       }
+      function nearestReal(j) {
+        var real = lastFrame.real;
+        if (!real) return j;
+        if (real[j]) return j;
+        for (var d = 1; d < lastFrame.m; d++) {
+          if (j - d >= 0 && real[j - d]) return j - d;
+          if (j + d < lastFrame.m && real[j + d]) return j + d;
+        }
+        return j;
+      }
       function showTip(j) {
         if (!tip || !lastFrame) return false;
         var m = lastFrame.m, labels = lastFrame.labels;
         if (!m || j < 0 || j >= m) return false;
+        j = nearestReal(j);
         var total = 0, rowsHtml = '';
         lastFrame.rows.forEach(function (r) {
           var n = r.arr[j] || 0;
@@ -901,6 +958,16 @@ if (hasHistory) {
   :global(.area-plot .area-6) { fill: #db2777; }
   :global(.area-plot .area-7) { fill: #65a30d; }
   :global(.area-plot .area-8) { fill: var(--muted); fill-opacity: 0.55; }
+  :global(.area-plot .dot) { stroke: var(--border); stroke-width: 1.5; }
+  :global(.area-plot .dot-0) { fill: #2563eb; }
+  :global(.area-plot .dot-1) { fill: #dc2626; }
+  :global(.area-plot .dot-2) { fill: #16a34a; }
+  :global(.area-plot .dot-3) { fill: #d97706; }
+  :global(.area-plot .dot-4) { fill: #7c3aed; }
+  :global(.area-plot .dot-5) { fill: #0891b2; }
+  :global(.area-plot .dot-6) { fill: #db2777; }
+  :global(.area-plot .dot-7) { fill: #65a30d; }
+  :global(.area-plot .dot-8) { fill: var(--muted); }
   .y-note { margin-top: 0; }
 
   /* Hover tooltip (content built by client JS -> global rules) */
