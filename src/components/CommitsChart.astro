@@ -323,6 +323,7 @@ if (hasHistory) {
           >{label}</text>
         ))}
       </svg>
+      <div class="chart-tip" id="chart-tip" hidden></div>
     </div>
     <p class="meta y-note" id="peak-note">Peak month: {fmt(monthMax)} commits</p>
     <div class="chart-legend" id="chart-legend" role="group" aria-label="Toggle projects in chart">
@@ -422,6 +423,9 @@ if (hasHistory) {
       var wrap = document.getElementById('area-wrap');
       var weekStamps = JSON.parse(svg.getAttribute('data-weeks') || '[]');
       var view = '12m';
+      var tip = document.getElementById('chart-tip');
+      var lastFrame = null;
+      var SW = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
 
       function f(n) { return (Math.round(n * 10) / 10).toString(); }
       function xPos(j, m) {
@@ -508,6 +512,7 @@ if (hasHistory) {
         var frame = currentFrame();
         var m = frame.monthlyMode ? monthCount : frame.labels.length;
         if (!m) return;
+        hideTip();
         // Per-series view totals -> badges + data-n
         frame.cols.forEach(function (c) {
           var t = c.arr.reduce(function (a, b) { return a + b; }, 0);
@@ -593,7 +598,87 @@ if (hasHistory) {
         if (wrap) {
           wrap.setAttribute('aria-label', 'Stacked commits ' + rangeText + '. Peak ' + fmt(peak) + ' commits. Total ' + fmt(sum) + ' commits.');
         }
+        storeFrame(frame, visible, m);
       }
+
+      // Hover tooltip: per-project breakdown at nearest point
+      function escHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function swColor(idx) { return idx >= 0 && idx < 8 ? SW[idx] : 'var(--muted)'; }
+      function hideTip() { if (tip) tip.hidden = true; }
+      function storeFrame(frame, visible, m) {
+        lastFrame = {
+          labels: frame.labels.slice(),
+          m: m,
+          rows: visible.map(function (c) {
+            var lbl = c.btn.querySelector('.legend-label');
+            return {
+              title: lbl ? lbl.textContent : c.id,
+              idx: parseInt(c.btn.getAttribute('data-idx') || '0', 10),
+              arr: c.arr.slice()
+            };
+          })
+        };
+      }
+      function showTip(j) {
+        if (!tip || !lastFrame) return false;
+        var m = lastFrame.m, labels = lastFrame.labels;
+        if (!m || j < 0 || j >= m) return false;
+        var total = 0, rowsHtml = '';
+        lastFrame.rows.forEach(function (r) {
+          var n = r.arr[j] || 0;
+          total += n;
+          if (n > 0) {
+            rowsHtml += '<div class="tip-row"><span class="tip-swatch" style="background:' + swColor(r.idx) + '"></span>' +
+              '<span class="tip-name">' + escHtml(r.title) + '</span>' +
+              '<span class="tip-val">' + fmt(n) + '</span></div>';
+          }
+        });
+        tip.innerHTML = '<div class="tip-head">' + escHtml(labels[j]) + ' · ' + fmt(total) + '</div>' +
+          (rowsHtml || '<div class="tip-row tip-empty">No commits</div>');
+        tip.hidden = false;
+        return true;
+      }
+      function placeTip(clientX, clientY) {
+        if (!tip || !wrap) return;
+        var wr = wrap.getBoundingClientRect();
+        var tw = tip.offsetWidth, th = tip.offsetHeight;
+        var x = clientX - wr.left, y = clientY - wr.top;
+        var left = x + 14, top = y - th - 14;
+        if (left + tw > wr.width - 8) left = x - tw - 14;
+        if (left < 8) left = 8;
+        if (top < 8) top = 8;
+        if (top + th > wr.height - 8) top = Math.max(8, wr.height - th - 8);
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+      }
+      function pointFromEvent(e) {
+        if (!lastFrame || !lastFrame.m) return -1;
+        var m = lastFrame.m;
+        if (m <= 1) return 0;
+        var r = svg.getBoundingClientRect();
+        var px = (e.clientX - r.left) * (W / r.width);
+        return Math.max(0, Math.min(m - 1, Math.round((px - PAD_L) / (PLOT_W / (m - 1)))));
+      }
+      function hoverAt(e) {
+        var j = pointFromEvent(e);
+        if (j < 0 || !showTip(j)) return;
+        placeTip(e.clientX, e.clientY);
+      }
+      svg.addEventListener('mousemove', hoverAt);
+      svg.addEventListener('click', hoverAt);
+      svg.addEventListener('mouseleave', hideTip);
+      // Snapshot server-rendered 12m view so hover works before any switch
+      (function () {
+        var frame = currentFrame();
+        var m = frame.monthlyMode ? monthCount : frame.labels.length;
+        if (!m) return;
+        var visible = frame.cols.filter(function (c) { return c.btn.getAttribute('aria-pressed') === 'true'; });
+        storeFrame(frame, visible, m);
+      })();
 
       buttons.forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -763,7 +848,12 @@ if (hasHistory) {
   }
 
   /* Stacked monthly area plot */
+  /* NOTE: SVG inner nodes are rebuilt by client JS on range switch.
+     Astro scopes <style> via data-astro-cid, which runtime-created
+     nodes lack — so every rule matching rebuilt SVG content must be
+     :global, else fills/strokes fall back to black (dark chart). */
   .area-wrap {
+    position: relative;
     border: 2px solid var(--border);
     background: var(--panel);
     padding: 0.5rem;
@@ -785,33 +875,89 @@ if (hasHistory) {
     min-width: 0;
     overflow: hidden;
   }
-  .area-plot .grid line {
+  :global(.area-plot .grid line) {
     stroke: var(--border);
     stroke-width: 1;
     opacity: 0.25;
   }
-  .area-plot .grid text {
+  :global(.area-plot .grid text) {
     fill: var(--muted);
     font-family: var(--font-mono);
     font-size: 12px;
   }
-  .area-plot .x-label {
+  :global(.area-plot .x-label) {
     fill: var(--muted);
     font-family: var(--font-mono);
     font-size: 12px;
     text-transform: uppercase;
   }
-  .area { stroke: var(--border); stroke-width: 1.5; }
-  .area-0 { fill: #2563eb; }
-  .area-1 { fill: #dc2626; }
-  .area-2 { fill: #16a34a; }
-  .area-3 { fill: #d97706; }
-  .area-4 { fill: #7c3aed; }
-  .area-5 { fill: #0891b2; }
-  .area-6 { fill: #db2777; }
-  .area-7 { fill: #65a30d; }
-  .area-8 { fill: var(--muted); fill-opacity: 0.55; }
+  :global(.area-plot .area) { stroke: var(--border); stroke-width: 1.5; }
+  :global(.area-plot .area-0) { fill: #2563eb; }
+  :global(.area-plot .area-1) { fill: #dc2626; }
+  :global(.area-plot .area-2) { fill: #16a34a; }
+  :global(.area-plot .area-3) { fill: #d97706; }
+  :global(.area-plot .area-4) { fill: #7c3aed; }
+  :global(.area-plot .area-5) { fill: #0891b2; }
+  :global(.area-plot .area-6) { fill: #db2777; }
+  :global(.area-plot .area-7) { fill: #65a30d; }
+  :global(.area-plot .area-8) { fill: var(--muted); fill-opacity: 0.55; }
   .y-note { margin-top: 0; }
+
+  /* Hover tooltip (content built by client JS -> global rules) */
+  :global(.chart-tip) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: var(--bg);
+    color: var(--fg);
+    border: 2px solid var(--border);
+    box-shadow: 3px 3px 0 var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    padding: 0.5rem 0.6rem;
+    pointer-events: none;
+    z-index: 2;
+    max-width: min(16rem, calc(100% - 1rem));
+    min-width: 0;
+  }
+  :global(.chart-tip[hidden]) { display: none; }
+  :global(.tip-head) {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  :global(.tip-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    min-width: 0;
+  }
+  :global(.tip-swatch) {
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  :global(.tip-name) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: uppercase;
+    min-width: 0;
+  }
+  :global(.tip-val) {
+    margin-left: auto;
+    padding-left: 0.6rem;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  :global(.tip-empty) { color: var(--muted); }
 
   /* Legend (both modes) */
   .chart-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; max-width: 100%; min-width: 0; }
