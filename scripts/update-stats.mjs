@@ -11,14 +11,14 @@
  *   to avoid GitHub search-index flicker.
  *
  * PHASE 2 — weekly commit history (powers the over-time chart)
- *   For each tracked repo, fetches weekly commit activity and writes
+ *   For each tracked repo, fetches per-contributor stats and writes
  *   src/data/commit-history.json as:
  *     { generatedAt: <iso>, weeks: [{ week: <unix>, total: <n>,
  *       repos: { <project-slug>: <n> } }] }
- *   Capped to the last 52 weeks. Per-repo failures skip that repo and
- *   never kill the run. Note: weekly counts are whole-repo totals
- *   (GitHub stats API has no author filter), while `commits`
- *   frontmatter stays author-scoped.
+ *   Counts are author-scoped (AUTHOR's commits only via
+ *   /stats/contributors, matched case-insensitively). Repos where
+ *   the author is absent are skipped. Capped to the last 52 weeks.
+ *   Per-repo failures skip that repo and never kill the run.
  *
  * Required env: GH_STATS_TOKEN — a fine-grained PAT with contents
  * read-only access, limited to the listed repos and the NCCSSoftware
@@ -112,8 +112,8 @@ if (files.length > 0 && failed >= files.length) {
 // ---------------------------------------------------------------------------
 // PHASE 2 — weekly commit history for the over-time chart (never fatal)
 // ---------------------------------------------------------------------------
-async function fetchCommitActivity(owner, repo) {
-  const url = `https://api.github.com/repos/${owner}/${repo}/stats/commit_activity`;
+async function fetchAuthorWeeks(owner, repo) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/stats/contributors`;
   let res = await fetch(url, { headers });
   if (res.status === 202) {
     // GitHub computing stats — wait once, retry once, else skip repo
@@ -121,9 +121,16 @@ async function fetchCommitActivity(owner, repo) {
     res = await fetch(url, { headers });
     if (res.status === 202) throw new Error('stats computing, try next run');
   }
-  if (res.status === 204) return []; // empty repo
+  if (res.status === 204) return null; // empty repo
+  if (res.status === 404) return null; // no stats / no access
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
-  return await res.json();
+  const data = await res.json();
+  if (!Array.isArray(data)) return null;
+  const mine = data.find(
+    (c) => c?.author?.login?.toLowerCase() === AUTHOR.toLowerCase()
+  );
+  if (!mine || !Array.isArray(mine.weeks)) return null; // author absent
+  return mine.weeks;
 }
 
 function parseRepoLink(content) {
@@ -147,16 +154,24 @@ try {
         continue;
       }
       const [owner, name] = repo.split('/');
-      const activity = await fetchCommitActivity(owner, name);
+      const authorWeeks = await fetchAuthorWeeks(owner, name);
       await sleep(2500);
+      if (!authorWeeks) {
+        console.log(`history skip ${slug}: author ${AUTHOR} absent`);
+        continue;
+      }
       const series = new Map();
-      for (const w of activity) {
-        if (w && typeof w.week === 'number' && (w.total || 0) > 0) {
-          series.set(w.week, w.total);
+      for (const w of authorWeeks) {
+        if (w && typeof w.w === 'number' && (w.c || 0) > 0) {
+          series.set(w.w, w.c);
         }
       }
+      if (series.size === 0) {
+        console.log(`history skip ${slug}: no commits by ${AUTHOR}`);
+        continue;
+      }
       perRepo.set(slug, series);
-      console.log(`history ${repo}: ${series.size} active weeks`);
+      console.log(`history ${repo}: ${series.size} active weeks (${AUTHOR} only)`);
     } catch (err) {
       historyFailed++;
       console.error(`history skip ${slug}: ${err.message}`);
