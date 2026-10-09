@@ -1,6 +1,6 @@
 ---
 title: "Movie Booking System with Seat Selection"
-description: "A Movie hall staff system created in C"
+description: "CLI movie hall booking system in C with seat selection and staff workflows."
 date: 2023-09-17
 category: "C, CRUD, CLI"
 link: "https://github.com/ChandanShakya/Movie-Booking-System-with-Seat-Selection"

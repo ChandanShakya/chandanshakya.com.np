@@ -1,9 +1,9 @@
 ---
 title: "Laravel Essentials"
-description: "This extension pack contains the most essential extensions for Laravel development."
+description: "VS Code extension pack bundling essential tools for Laravel development"
 date: 2023-01-16
-category: "Laravel, Web Development, Extension"
-link: "https://github.com/ChandanShakya/cameronsworld-under-construction-extract"
+category: "VS Code, Laravel"
+link: "https://github.com/ChandanShakya/laravel-essentialx"
 client: "Public"
-commits: 1
+commits: 8
 ---

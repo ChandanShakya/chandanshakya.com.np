@@ -1,9 +1,9 @@
 ---
 title: "GitPass"
-description: "Simple Online Self-Deployable Password Manager with Version Control using AES encryption"
+description: "Self-deployable online password manager with version control and AES encryption"
 date: 2022-02-19
-category: "Web Development"
+category: "PHP, password-manager"
 link: "https://github.com/ChandanShakya/GitPass"
 client: "Public"
-commits: 45
+commits: 57
 ---

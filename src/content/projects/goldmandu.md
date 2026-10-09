@@ -1,9 +1,9 @@
 ---
 title: "GoldMandu (Gold and Silver Prices)"
-description: "View Gold and Silver Price in Kathmandu"
+description: "Tracks daily gold and silver prices in Kathmandu with automated scraping"
 date: 2022-05-20
-category: "Scraping, Web Development, Cron, Python"
+category: "Kotlin, scraping"
 link: "https://github.com/ChandanShakya/goldmandu"
-client: "Private"
-commits: 2
+client: "Public"
+commits: 770
 ---

@@ -1,9 +1,9 @@
 ---
 title: "Chow Bot"
-description: "CollegeBot is a Python script that sends reminders for college lab classes via Telegram. It uses the python-telegram-bot library to interact with the Telegram Bot API."
+description: "Telegram bot sending reminders for college lab classes via Telegram Bot API."
 date: 2023-04-10
-category: "Python, Telegram, API, Reminder"
+category: "Python, Telegram Bot"
 link: "https://github.com/ChandanShakya/ChowBot"
 client: "Public"
-commits: 27
+commits: 29
 ---

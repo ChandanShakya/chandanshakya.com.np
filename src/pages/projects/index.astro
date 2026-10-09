@@ -63,8 +63,8 @@ const categories = [...new Set(
           });
           var visible = 0;
           items.forEach(function (item) {
-            var cats = (item.getAttribute('data-categories') || '').toLowerCase();
-            var show = filter === 'all' || cats.indexOf(filter.toLowerCase()) !== -1;
+            var cats = (item.getAttribute('data-categories') || '').split(',').map(function (c) { return c.trim().toLowerCase(); });
+            var show = filter === 'all' || cats.indexOf(filter.toLowerCase().trim()) !== -1;
             item.hidden = !show;
             if (show) visible++;
           });

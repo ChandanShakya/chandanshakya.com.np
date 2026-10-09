@@ -1,9 +1,9 @@
 ---
 title: "Kabir Profile Views"
-description: "This is a shell script that increases view count using curl"
-date: 2023-01-15
-category: "Bash, Shell, CLI, Curl, Script"
+description: "Shell script boosting profile view counts automatically using curl requests"
+date: 2022-01-15
+category: "Shell, curl"
 link: "https://github.com/ChandanShakya/KabirProfileViews"
 client: "Public"
-commits: 2
+commits: 10
 ---

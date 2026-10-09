@@ -1,8 +1,8 @@
 ---
 title: "ISP-Ticket-System"
-description: "Ticket Management for Internet Service Providers"
+description: "Ticket management system for internet service providers handling support requests"
 date: 2022-06-04
-category: "Web Development"
+category: "PHP, ticket"
 link: "https://github.com/ChandanShakya/ISP-Ticket-System"
 client: "Public"
 commits: 10

@@ -1,9 +1,9 @@
 ---
 title: "flash"
-description: "Laravel-based project."
+description: "PHP web app with Hack logic and CSS styling assets."
 date: 2025-06-01
-category: "Laravel"
+category: "PHP"
 link: "https://github.com/ChandanShakya/flash"
 client: "Public"
-commits: 22
+commits: 23
 ---

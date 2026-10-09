@@ -1,8 +1,8 @@
 ---
 title: "To Do Laravel"
-description: "Multi User To-Do Application made with Laravel Livewire"
+description: "Multi-user to-do app built with Laravel Livewire, auth and task management."
 date: 2023-03-10
-category: "Laravel, Web Development, Livewire"
+category: "PHP, Laravel, Livewire"
 link: "https://github.com/ChandanShakya/To-Do-App-Laravel"
 client: "Public"
 commits: 8

@@ -1,9 +1,9 @@
 ---
 title: "Mary UI Starter Kit"
-description: "Laravel Volt + Mary UI starter kit with authentication, role-based authorization via Spatie permissions, and admin panel. Published on Packagist."
+description: "Laravel Volt and Mary UI starter kit with authentication and roles"
 date: 2025-04-08
-category: "Laravel, Starter Kit, Livewire"
+category: "PHP, Livewire"
 link: "https://github.com/ChandanShakya/mary-ui-starter-kit"
 client: "Public"
-commits: 50
+commits: 54
 ---

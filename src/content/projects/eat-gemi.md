@@ -1,8 +1,8 @@
 ---
 title: "EatGemi"
-description: "AI-Powered Restaurant Finder — Vue 3 PWA + Laravel API with Google Gemini AI integration for smart restaurant discovery, menu access, and offline support."
+description: "AI restaurant finder PWA pairing Vue 3 frontend with Laravel and Gemini."
 date: 2025-07-11
-category: "Laravel, Vue, AI, PWA"
+category: "Vue, Laravel, AI"
 link: "https://github.com/ChandanShakya/eat-gemi"
 client: "Public"
 commits: 11

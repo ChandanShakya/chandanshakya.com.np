@@ -1,9 +1,9 @@
 ---
 title: "dotfiles"
-description: "My simple dotfile for My Dev Setup"
+description: "Personal dev environment setup dotfiles managed with chezmoi and Git."
 date: 2022-09-01
-category: "System Configuration"
+category: "Shell, Dotfiles"
 link: "https://github.com/ChandanShakya/dotfiles"
-client: "Private"
+client: "Public"
 commits: 32
 ---
