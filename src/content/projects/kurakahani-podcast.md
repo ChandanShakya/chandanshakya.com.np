@@ -5,5 +5,5 @@ date: 2023-09-17
 category: "Jekyll, podcast, RSS"
 link: "https://github.com/Kurakahani/kurakahani.github.io"
 client: "Public"
-commits: 105
+commits: 110
 ---

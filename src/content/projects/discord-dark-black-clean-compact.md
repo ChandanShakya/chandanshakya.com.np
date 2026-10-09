@@ -5,5 +5,5 @@ date: 2022-03-19
 category: "CSS, Discord Theme"
 link: "https://github.com/ChandanShakya/Dark-Discord-Black-Clean-Compact-D2-B-C2"
 client: "Public"
-commits: 10
+commits: 11
 ---
