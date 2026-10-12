@@ -1,17 +1,6 @@
 {
-  "generatedAt": "2026-10-11T06:52:33.777Z",
+  "generatedAt": "2026-10-12T07:02:51.628Z",
   "weeks": [
-    {
-      "week": 1759622400,
-      "total": 39,
-      "repos": {
-        "nccs-cas": 9,
-        "mary-ui-starter-kit": 7,
-        "nccs-sos": 7,
-        "nccs-sms-bachelors": 9,
-        "nccs-alumni": 7
-      }
-    },
     {
       "week": 1760227200,
       "total": 22,
@@ -444,6 +433,14 @@
         "nccs-cas": 14,
         "mary-ui-starter-kit": 1,
         "nccs-sms-bachelors": 12
+      }
+    },
+    {
+      "week": 1791676800,
+      "total": 6,
+      "repos": {
+        "goldmandu": 1,
+        "nccs-cas": 5
       }
     }
   ]
