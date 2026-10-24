@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-23T05:52:41.540Z",
+  "generatedAt": "2026-10-24T05:28:25.715Z",
   "weeks": [
     {
       "week": 1760832000,
@@ -91,8 +91,8 @@
       "week": 1767484800,
       "total": 17,
       "repos": {
-        "nccs-cas": 14,
         "nccs-soft-template": 1,
+        "nccs-cas": 14,
         "nccs-sms-bachelors": 2
       }
     },
@@ -113,10 +113,9 @@
     },
     {
       "week": 1769299200,
-      "total": 12,
+      "total": 11,
       "repos": {
         "nccs-cas": 4,
-        "nccs-alumni-app": 1,
         "nccs-sms-bachelors": 7
       }
     },
@@ -124,9 +123,9 @@
       "week": 1769904000,
       "total": 101,
       "repos": {
-        "goldmandu": 4,
         "nccs-cas": 57,
-        "nccs-sms-bachelors": 40
+        "nccs-sms-bachelors": 40,
+        "goldmandu": 4
       }
     },
     {
@@ -149,11 +148,11 @@
       "week": 1771718400,
       "total": 87,
       "repos": {
+        "nccs-sos": 11,
+        "nccs-alumni": 11,
         "nccs-cas": 16,
         "mary-ui-starter-kit": 11,
-        "nccs-sos": 11,
-        "nccs-sms-bachelors": 38,
-        "nccs-alumni": 11
+        "nccs-sms-bachelors": 38
       }
     },
     {
@@ -176,76 +175,76 @@
       "week": 1774137600,
       "total": 33,
       "repos": {
-        "goldmandu": 14,
         "nccs-cas": 6,
-        "nccs-sms-bachelors": 13
+        "nccs-sms-bachelors": 13,
+        "goldmandu": 14
       }
     },
     {
       "week": 1774742400,
       "total": 38,
       "repos": {
-        "goldmandu": 6,
         "nccs-cas": 9,
-        "nccs-sms-bachelors": 23
+        "nccs-sms-bachelors": 23,
+        "goldmandu": 6
       }
     },
     {
       "week": 1775347200,
       "total": 35,
       "repos": {
-        "goldmandu": 6,
         "nccs-cas": 20,
+        "nccs-sms-bachelors": 8,
         "nccs-bruno-student-api": 1,
-        "nccs-sms-bachelors": 8
+        "goldmandu": 6
       }
     },
     {
       "week": 1775952000,
       "total": 14,
       "repos": {
-        "goldmandu": 2,
         "nccs-cas": 3,
+        "nvim": 3,
         "nccs-sms-bachelors": 6,
-        "nvim": 3
+        "goldmandu": 2
       }
     },
     {
       "week": 1776556800,
       "total": 51,
       "repos": {
+        "nccs-passport": 8,
         "nccs-cas": 23,
-        "mary-ui-starter-kit": 2,
-        "nccs-sms-bachelors": 17,
         "nvim": 1,
-        "nccs-passport": 8
+        "mary-ui-starter-kit": 2,
+        "nccs-sms-bachelors": 17
       }
     },
     {
       "week": 1777161600,
       "total": 40,
       "repos": {
+        "nccs-passport": 9,
         "nccs-cas": 24,
-        "nccs-sms-bachelors": 7,
-        "nccs-passport": 9
+        "nccs-sms-bachelors": 7
       }
     },
     {
       "week": 1777766400,
       "total": 72,
       "repos": {
+        "nccs-passport": 4,
         "nccs-cas": 57,
-        "nccs-sms-bachelors": 11,
-        "nccs-passport": 4
+        "nccs-sms-bachelors": 11
       }
     },
     {
       "week": 1778371200,
       "total": 46,
       "repos": {
+        "nccs-passport": 2,
         "nccs-cas": 39,
-        "nccs-sms-bachelors": 5,
-        "nccs-passport": 2
+        "nccs-sms-bachelors": 5
       }
     },
     {
@@ -275,18 +274,18 @@
       "week": 1780790400,
       "total": 28,
       "repos": {
-        "goldmandu": 1,
         "nccs-cas": 11,
-        "nccs-sms-bachelors": 16
+        "nccs-sms-bachelors": 16,
+        "goldmandu": 1
       }
     },
     {
       "week": 1781395200,
       "total": 30,
       "repos": {
+        "nccs-passport": 1,
         "nccs-cas": 24,
-        "nccs-sms-bachelors": 5,
-        "nccs-passport": 1
+        "nccs-sms-bachelors": 5
       }
     },
     {
@@ -303,8 +302,8 @@
       "total": 40,
       "repos": {
         "nccs-cas": 18,
-        "nccs-sms-bachelors": 9,
         "nvim": 1,
+        "nccs-sms-bachelors": 9,
         "metalhub-astro": 12
       }
     },
@@ -312,32 +311,32 @@
       "week": 1783209600,
       "total": 26,
       "repos": {
-        "nccs-cas": 25,
-        "nccs-clinic-plus": 1
+        "nccs-clinic-plus": 1,
+        "nccs-cas": 25
       }
     },
     {
       "week": 1783814400,
       "total": 76,
       "repos": {
-        "nccs-cas": 25,
-        "fuellog": 51
+        "fuellog": 51,
+        "nccs-cas": 25
       }
     },
     {
       "week": 1784419200,
       "total": 95,
       "repos": {
-        "nccs-cas": 50,
-        "fuellog": 45
+        "fuellog": 45,
+        "nccs-cas": 50
       }
     },
     {
       "week": 1785024000,
       "total": 36,
       "repos": {
-        "nccs-cas": 23,
-        "fuellog": 13
+        "fuellog": 13,
+        "nccs-cas": 23
       }
     },
     {
@@ -390,57 +389,57 @@
       "week": 1789257600,
       "total": 71,
       "repos": {
-        "goldmandu": 22,
-        "nccs-cas": 7,
         "fuellog": 24,
+        "pixel8": 7,
+        "nccs-cas": 7,
         "nccs-sms-bachelors": 11,
-        "pixel8": 7
+        "goldmandu": 22
       }
     },
     {
       "week": 1789862400,
       "total": 35,
       "repos": {
-        "goldmandu": 13,
         "nccs-cas": 3,
-        "nccs-sms-bachelors": 19
+        "nccs-sms-bachelors": 19,
+        "goldmandu": 13
       }
     },
     {
       "week": 1790467200,
       "total": 71,
       "repos": {
-        "goldmandu": 12,
         "nccs-cas": 8,
+        "nccs-sms-bachelors": 34,
         "family-tree": 17,
-        "nccs-sms-bachelors": 34
+        "goldmandu": 12
       }
     },
     {
       "week": 1791072000,
       "total": 34,
       "repos": {
-        "goldmandu": 7,
         "nccs-cas": 14,
         "mary-ui-starter-kit": 1,
-        "nccs-sms-bachelors": 12
+        "nccs-sms-bachelors": 12,
+        "goldmandu": 7
       }
     },
     {
       "week": 1791676800,
       "total": 31,
       "repos": {
-        "goldmandu": 7,
         "nccs-cas": 5,
+        "nccs-sms-bachelors": 18,
         "family-tree": 1,
-        "nccs-sms-bachelors": 18
+        "goldmandu": 7
       }
     },
     {
       "week": 1792281600,
-      "total": 7,
+      "total": 8,
       "repos": {
-        "goldmandu": 7
+        "goldmandu": 8
       }
     }
   ]
