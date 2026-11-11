@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T08:04:45.705Z",
+  "generatedAt": "2026-11-11T07:34:15.918Z",
   "weeks": [
     {
       "week": 1762646400,
@@ -443,9 +443,9 @@
     },
     {
       "week": 1794096000,
-      "total": 5,
+      "total": 7,
       "repos": {
-        "goldmandu": 5
+        "goldmandu": 7
       }
     }
   ]
