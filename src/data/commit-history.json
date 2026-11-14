@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T07:40:55.858Z",
+  "generatedAt": "2026-11-14T07:30:20.645Z",
   "weeks": [
     {
       "week": 1762646400,
@@ -12,65 +12,65 @@
       "week": 1763251200,
       "total": 35,
       "repos": {
-        "nccs-cas": 6,
-        "nccs-sms-bachelors": 29
+        "nccs-sms-bachelors": 29,
+        "nccs-cas": 6
       }
     },
     {
       "week": 1763856000,
       "total": 15,
       "repos": {
-        "nccs-cas": 6,
-        "nccs-sms-bachelors": 9
+        "nccs-sms-bachelors": 9,
+        "nccs-cas": 6
       }
     },
     {
       "week": 1764460800,
       "total": 42,
       "repos": {
-        "nccs-cas": 36,
-        "nccs-sms-bachelors": 6
+        "nccs-sms-bachelors": 6,
+        "nccs-cas": 36
       }
     },
     {
       "week": 1765065600,
       "total": 44,
       "repos": {
-        "nccs-cas": 31,
-        "nccs-sms-bachelors": 13
+        "nccs-sms-bachelors": 13,
+        "nccs-cas": 31
       }
     },
     {
       "week": 1765670400,
       "total": 75,
       "repos": {
-        "nccs-cas": 44,
-        "nccs-sms-bachelors": 31
+        "nccs-sms-bachelors": 31,
+        "nccs-cas": 44
       }
     },
     {
       "week": 1766275200,
       "total": 42,
       "repos": {
-        "nccs-cas": 12,
-        "nccs-sms-bachelors": 30
+        "nccs-sms-bachelors": 30,
+        "nccs-cas": 12
       }
     },
     {
       "week": 1766880000,
       "total": 31,
       "repos": {
-        "nccs-cas": 16,
-        "nccs-sms-bachelors": 15
+        "nccs-sms-bachelors": 15,
+        "nccs-cas": 16
       }
     },
     {
       "week": 1767484800,
       "total": 17,
       "repos": {
-        "nccs-cas": 14,
+        "nccs-sms-bachelors": 2,
         "nccs-soft-template": 1,
-        "nccs-sms-bachelors": 2
+        "nccs-cas": 14
       }
     },
     {
@@ -84,161 +84,161 @@
       "week": 1768694400,
       "total": 13,
       "repos": {
-        "nccs-cas": 4,
-        "nccs-sms-bachelors": 9
+        "nccs-sms-bachelors": 9,
+        "nccs-cas": 4
       }
     },
     {
       "week": 1769299200,
       "total": 12,
       "repos": {
-        "nccs-cas": 4,
+        "nccs-sms-bachelors": 7,
         "nccs-alumni-app": 1,
-        "nccs-sms-bachelors": 7
+        "nccs-cas": 4
       }
     },
     {
       "week": 1769904000,
       "total": 101,
       "repos": {
-        "nccs-cas": 57,
         "nccs-sms-bachelors": 40,
-        "goldmandu": 4
+        "goldmandu": 4,
+        "nccs-cas": 57
       }
     },
     {
       "week": 1770508800,
       "total": 64,
       "repos": {
-        "nccs-cas": 12,
-        "nccs-sms-bachelors": 52
+        "nccs-sms-bachelors": 52,
+        "nccs-cas": 12
       }
     },
     {
       "week": 1771113600,
       "total": 64,
       "repos": {
-        "nccs-cas": 32,
-        "nccs-sms-bachelors": 32
+        "nccs-sms-bachelors": 32,
+        "nccs-cas": 32
       }
     },
     {
       "week": 1771718400,
       "total": 87,
       "repos": {
-        "nccs-cas": 16,
-        "nccs-sos": 11,
         "nccs-sms-bachelors": 38,
-        "nccs-alumni": 11,
-        "mary-ui-starter-kit": 11
+        "mary-ui-starter-kit": 11,
+        "nccs-sos": 11,
+        "nccs-cas": 16,
+        "nccs-alumni": 11
       }
     },
     {
       "week": 1772928000,
       "total": 10,
       "repos": {
-        "nccs-cas": 8,
-        "nccs-sms-bachelors": 2
+        "nccs-sms-bachelors": 2,
+        "nccs-cas": 8
       }
     },
     {
       "week": 1773532800,
       "total": 22,
       "repos": {
-        "nccs-cas": 7,
-        "nccs-sms-bachelors": 15
+        "nccs-sms-bachelors": 15,
+        "nccs-cas": 7
       }
     },
     {
       "week": 1774137600,
       "total": 33,
       "repos": {
-        "nccs-cas": 6,
         "nccs-sms-bachelors": 13,
-        "goldmandu": 14
+        "goldmandu": 14,
+        "nccs-cas": 6
       }
     },
     {
       "week": 1774742400,
       "total": 38,
       "repos": {
-        "nccs-cas": 9,
         "nccs-sms-bachelors": 23,
-        "goldmandu": 6
+        "goldmandu": 6,
+        "nccs-cas": 9
       }
     },
     {
       "week": 1775347200,
       "total": 35,
       "repos": {
-        "nccs-cas": 20,
-        "nccs-bruno-student-api": 1,
         "nccs-sms-bachelors": 8,
-        "goldmandu": 6
+        "nccs-bruno-student-api": 1,
+        "goldmandu": 6,
+        "nccs-cas": 20
       }
     },
     {
       "week": 1775952000,
       "total": 14,
       "repos": {
-        "nvim": 3,
-        "nccs-cas": 3,
         "nccs-sms-bachelors": 6,
-        "goldmandu": 2
+        "goldmandu": 2,
+        "nccs-cas": 3,
+        "nvim": 3
       }
     },
     {
       "week": 1776556800,
       "total": 51,
       "repos": {
-        "nvim": 1,
+        "nccs-sms-bachelors": 17,
+        "mary-ui-starter-kit": 2,
         "nccs-cas": 23,
         "nccs-passport": 8,
-        "nccs-sms-bachelors": 17,
-        "mary-ui-starter-kit": 2
+        "nvim": 1
       }
     },
     {
       "week": 1777161600,
       "total": 40,
       "repos": {
+        "nccs-sms-bachelors": 7,
         "nccs-cas": 24,
-        "nccs-passport": 9,
-        "nccs-sms-bachelors": 7
+        "nccs-passport": 9
       }
     },
     {
       "week": 1777766400,
       "total": 72,
       "repos": {
+        "nccs-sms-bachelors": 11,
         "nccs-cas": 57,
-        "nccs-passport": 4,
-        "nccs-sms-bachelors": 11
+        "nccs-passport": 4
       }
     },
     {
       "week": 1778371200,
       "total": 46,
       "repos": {
+        "nccs-sms-bachelors": 5,
         "nccs-cas": 39,
-        "nccs-passport": 2,
-        "nccs-sms-bachelors": 5
+        "nccs-passport": 2
       }
     },
     {
       "week": 1778976000,
       "total": 22,
       "repos": {
-        "nccs-cas": 17,
-        "nccs-sms-bachelors": 5
+        "nccs-sms-bachelors": 5,
+        "nccs-cas": 17
       }
     },
     {
       "week": 1779580800,
       "total": 39,
       "repos": {
-        "nccs-cas": 27,
-        "nccs-sms-bachelors": 12
+        "nccs-sms-bachelors": 12,
+        "nccs-cas": 27
       }
     },
     {
@@ -252,69 +252,69 @@
       "week": 1780790400,
       "total": 28,
       "repos": {
-        "nccs-cas": 11,
         "nccs-sms-bachelors": 16,
-        "goldmandu": 1
+        "goldmandu": 1,
+        "nccs-cas": 11
       }
     },
     {
       "week": 1781395200,
       "total": 30,
       "repos": {
+        "nccs-sms-bachelors": 5,
         "nccs-cas": 24,
-        "nccs-passport": 1,
-        "nccs-sms-bachelors": 5
+        "nccs-passport": 1
       }
     },
     {
       "week": 1782000000,
       "total": 88,
       "repos": {
-        "nvim": 5,
+        "metalhub-astro": 67,
         "nccs-cas": 16,
-        "metalhub-astro": 67
+        "nvim": 5
       }
     },
     {
       "week": 1782604800,
       "total": 40,
       "repos": {
-        "nvim": 1,
-        "nccs-cas": 18,
+        "nccs-sms-bachelors": 9,
         "metalhub-astro": 12,
-        "nccs-sms-bachelors": 9
+        "nccs-cas": 18,
+        "nvim": 1
       }
     },
     {
       "week": 1783209600,
       "total": 26,
       "repos": {
-        "nccs-cas": 25,
-        "nccs-clinic-plus": 1
+        "nccs-clinic-plus": 1,
+        "nccs-cas": 25
       }
     },
     {
       "week": 1783814400,
       "total": 76,
       "repos": {
-        "nccs-cas": 25,
-        "fuellog": 51
+        "fuellog": 51,
+        "nccs-cas": 25
       }
     },
     {
       "week": 1784419200,
       "total": 95,
       "repos": {
-        "nccs-cas": 50,
-        "fuellog": 45
+        "fuellog": 45,
+        "nccs-cas": 50
       }
     },
     {
       "week": 1785024000,
       "total": 36,
       "repos": {
-        "nccs-cas": 23,
-        "fuellog": 13
+        "fuellog": 13,
+        "nccs-cas": 23
       }
     },
     {
@@ -328,24 +328,24 @@
       "week": 1786233600,
       "total": 21,
       "repos": {
-        "nccs-cas": 19,
-        "nccs-sms-bachelors": 2
+        "nccs-sms-bachelors": 2,
+        "nccs-cas": 19
       }
     },
     {
       "week": 1786838400,
       "total": 14,
       "repos": {
-        "nccs-cas": 8,
-        "nccs-sms-bachelors": 6
+        "nccs-sms-bachelors": 6,
+        "nccs-cas": 8
       }
     },
     {
       "week": 1787443200,
       "total": 9,
       "repos": {
-        "nccs-cas": 2,
-        "nccs-sms-bachelors": 7
+        "nccs-sms-bachelors": 7,
+        "nccs-cas": 2
       }
     },
     {
@@ -359,58 +359,58 @@
       "week": 1788652800,
       "total": 9,
       "repos": {
-        "nccs-cas": 2,
-        "nccs-sms-bachelors": 7
+        "nccs-sms-bachelors": 7,
+        "nccs-cas": 2
       }
     },
     {
       "week": 1789257600,
       "total": 71,
       "repos": {
-        "nccs-cas": 7,
-        "pixel8": 7,
-        "fuellog": 24,
         "nccs-sms-bachelors": 11,
-        "goldmandu": 22
+        "fuellog": 24,
+        "goldmandu": 22,
+        "pixel8": 7,
+        "nccs-cas": 7
       }
     },
     {
       "week": 1789862400,
       "total": 35,
       "repos": {
-        "nccs-cas": 3,
         "nccs-sms-bachelors": 19,
-        "goldmandu": 13
+        "goldmandu": 13,
+        "nccs-cas": 3
       }
     },
     {
       "week": 1790467200,
       "total": 71,
       "repos": {
-        "nccs-cas": 8,
         "nccs-sms-bachelors": 34,
+        "family-tree": 17,
         "goldmandu": 12,
-        "family-tree": 17
+        "nccs-cas": 8
       }
     },
     {
       "week": 1791072000,
       "total": 36,
       "repos": {
-        "nccs-cas": 15,
         "nccs-sms-bachelors": 13,
+        "mary-ui-starter-kit": 1,
         "goldmandu": 7,
-        "mary-ui-starter-kit": 1
+        "nccs-cas": 15
       }
     },
     {
       "week": 1791676800,
       "total": 34,
       "repos": {
-        "nccs-cas": 8,
         "nccs-sms-bachelors": 18,
+        "family-tree": 1,
         "goldmandu": 7,
-        "family-tree": 1
+        "nccs-cas": 8
       }
     },
     {
@@ -424,28 +424,28 @@
       "week": 1792886400,
       "total": 43,
       "repos": {
-        "nccs-cas": 18,
-        "fuellog": 3,
         "nccs-sms-bachelors": 7,
+        "fuellog": 3,
+        "family-tree": 2,
         "goldmandu": 13,
-        "family-tree": 2
+        "nccs-cas": 18
       }
     },
     {
       "week": 1793491200,
       "total": 44,
       "repos": {
-        "nccs-cas": 14,
         "nccs-sms-bachelors": 17,
+        "mary-ui-starter-kit": 1,
         "goldmandu": 12,
-        "mary-ui-starter-kit": 1
+        "nccs-cas": 14
       }
     },
     {
       "week": 1794096000,
-      "total": 10,
+      "total": 11,
       "repos": {
-        "goldmandu": 10
+        "goldmandu": 11
       }
     }
   ]
