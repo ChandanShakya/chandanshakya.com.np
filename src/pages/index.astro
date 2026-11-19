@@ -10,8 +10,6 @@ import { SITE } from '../lib/constants';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const homepageDescription = 'Portfolio of Chandan Shakya, a full stack web developer building reliable web applications with Laravel, Livewire, and PHP.';
-
 const allProjects = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0);
 const featured = allProjects.slice(0, 6);
 const chartData = allProjects.map((p) => ({
@@ -44,7 +42,7 @@ const jsonLd = {
       '@type': 'WebSite',
       url: `${SITE.siteUrl}/`,
       name: SITE.title,
-      description: homepageDescription,
+      description: SITE.description,
       author: { '@type': 'Person', name: SITE.author, url: `${SITE.siteUrl}/` },
     },
     {
@@ -63,7 +61,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout description={homepageDescription}>
+<BaseLayout>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <Header />
 
