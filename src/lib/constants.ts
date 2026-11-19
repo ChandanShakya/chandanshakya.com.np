@@ -1,7 +1,7 @@
 export const SITE = {
   title: 'Chandan Shakya',
   homepageTitle: 'Chandan Shakya — Full Stack Web Developer | Laravel, Livewire & PHP',
-  description: 'Portfolio of Chandan Shakya, a full stack web developer building reliable web applications with Laravel, Livewire, and PHP.',
+  description: 'Personal Portfolio and Blog of Chandan Shakya — Full Stack Web Developer.',
   author: 'Chandan Shakya',
   siteUrl: 'https://chandanshakya.com.np',
   skills: 'Full Stack Web Developer',
