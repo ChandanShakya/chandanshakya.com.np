@@ -1,5 +1,6 @@
 export const SITE = {
-  title: 'Chandan Shakya',
+  title: 'Chandan Shakya — Full Stack Web Developer | Laravel, Livewire & PHP',
+  brand: 'Chandan Shakya',
   homepageTitle: 'Chandan Shakya — Full Stack Web Developer | Laravel, Livewire & PHP',
   description: 'Personal Portfolio and Blog of Chandan Shakya — Full Stack Web Developer.',
   author: 'Chandan Shakya',

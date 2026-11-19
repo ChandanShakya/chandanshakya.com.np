@@ -4,7 +4,8 @@ import { NAVIGATION } from '../lib/constants';
 const current = Astro.url.pathname;
 function isActive(href: string): boolean {
   if (href === '/') return current === '/';
-  return current === href || current.startsWith(href + '/');
+  const base = href.replace(/\/+$/, '');
+  return current === base || current.startsWith(base + '/');
 }
 ---
 

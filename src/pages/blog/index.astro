@@ -23,7 +23,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title="Blog" description="Read practical articles on Laravel, Livewire, PHP, web development, and software engineering written by Chandan Shakya today.">
+<BaseLayout title="Blog" description={`Articles by ${SITE.author}`}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Blog</h1>
   <ul class="plain">
