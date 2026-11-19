@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, relative } from 'node:path';
+import { join, relative, resolve, sep } from 'node:path';
 
 const root = process.cwd();
 const dist = join(root, 'dist');
@@ -28,32 +28,42 @@ function checkUrl(value, file, kind) {
   failures.push(`${relative(root, file)}: ${kind} lacks trailing slash: ${value}`);
 }
 
+function pageUrl(file) {
+  const path = relative(dist, file).replaceAll('\\', '/');
+  if (path === 'index.html') return 'https://chandanshakya.com.np/';
+  if (path.endsWith('/index.html')) return `https://chandanshakya.com.np/${path.slice(0, -'index.html'.length)}`;
+  return `https://chandanshakya.com.np/${path}`;
+}
+
 function outputFile(pathname) {
   let decoded;
   try {
-    decoded = decodeURIComponent(pathname).replace(/^\/+/, '');
+    decoded = decodeURIComponent(pathname);
   } catch {
     return null;
   }
-  const candidate = join(dist, decoded);
-  if (decoded === '404/' && existsSync(join(dist, '404.html'))) return join(dist, '404.html');
-  if (extname(candidate)) return existsSync(candidate) ? candidate : null;
-  const index = join(candidate, 'index.html');
-  if (existsSync(index)) return index;
-  return existsSync(join(dist, `${decoded}.html`)) ? join(dist, `${decoded}.html`) : null;
+  if (decoded.includes('\\') || decoded.split('/').includes('..')) return null;
+
+  const relativePath = decoded.startsWith('/') ? decoded.slice(1) : decoded;
+  const outputPath = relativePath === '' || relativePath.endsWith('/')
+    ? `${relativePath}index.html`
+    : relativePath;
+  const candidate = resolve(dist, outputPath);
+  if (candidate !== dist && !candidate.startsWith(`${dist}${sep}`)) return null;
+  return existsSync(candidate) && statSync(candidate).isFile() ? candidate : null;
 }
 
-function checkInternalLink(value, file) {
+function checkInternalLink(value, file, sourceUrl) {
   let url;
   try {
-    url = new URL(value, 'https://chandanshakya.com.np/');
+    url = new URL(value, sourceUrl);
   } catch {
     failures.push(`${relative(root, file)}: malformed href: ${value}`);
     return;
   }
   if (url.origin !== 'https://chandanshakya.com.np') return;
 
-  const target = value.startsWith('#') ? file : outputFile(url.pathname);
+  const target = outputFile(url.pathname);
   if (!target) {
     failures.push(`${relative(root, file)}: internal href target not found: ${value}`);
     return;
@@ -68,8 +78,16 @@ function checkInternalLink(value, file) {
     return;
   }
   const html = readFileSync(target, 'utf8');
-  const ids = [...html.matchAll(/\sid\s*=\s*(["'])(.*?)\1/g)].map((match) => decodeHtml(match[2]));
-  if (!ids.includes(fragment)) {
+  const anchors = [...html.matchAll(/<[a-z][^>]*>/gi)].flatMap(([tag]) => {
+    const isAnchor = /^<a(?:\s|>)/i.test(tag);
+    const values = [];
+    const pattern = isAnchor
+      ? /\s(?:id|name)\s*=\s*(["'])(.*?)\1/gi
+      : /\sid\s*=\s*(["'])(.*?)\1/gi;
+    for (const match of tag.matchAll(pattern)) values.push(decodeHtml(match[2]));
+    return values;
+  });
+  if (!anchors.includes(fragment)) {
     failures.push(`${relative(root, file)}: internal href fragment not found: ${value}`);
   }
 }
@@ -115,6 +133,7 @@ try {
   let homepageTitleCount = 0;
   for (const file of filesIn(dist).filter((file) => file.endsWith('.html'))) {
     const html = readFileSync(file, 'utf8');
+    const sourceUrl = pageUrl(file);
     const title = decodeHtml(html.match(/<title>(.*?)<\/title>/s)?.[1] ?? '');
     const isHomepage = relative(dist, file) === 'index.html';
     if (isHomepage && title !== homepageTitle) {
@@ -124,15 +143,11 @@ try {
     if (!isHomepage && title.length > 60) {
       failures.push(`${relative(root, file)}: title exceeds 60 characters (${title.length})`);
     }
-    for (const match of html.matchAll(/href\s*=\s*(["'])(.*?)\1/g)) {
+    for (const match of html.matchAll(/href\s*=\s*(["'])(.*?)\1/gi)) {
       const href = decodeHtml(match[2]);
       const pathname = internalUrl(href);
-      if (pathname) {
-        checkUrl(pathname, file, 'href');
-        checkInternalLink(pathname, file);
-      } else if (href.startsWith('#')) {
-        checkInternalLink(href, file);
-      }
+      if (pathname) checkUrl(pathname, file, 'href');
+      checkInternalLink(href, file, sourceUrl);
     }
   }
   if (homepageTitleCount !== 1) {

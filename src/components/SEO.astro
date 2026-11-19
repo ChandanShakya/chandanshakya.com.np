@@ -14,7 +14,8 @@ const shortTitle = title && title.length + titleSuffix.length > 60
   ? `${title.slice(0, 59 - titleSuffix.length).trimEnd()}…`
   : title;
 const pageTitle = shortTitle ? `${shortTitle}${titleSuffix}` : SITE.homepageTitle;
-const canonicalURL = new URL(Astro.url.pathname, SITE.siteUrl);
+const canonicalPath = Astro.url.pathname === '/404/' ? '/404.html' : Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, SITE.siteUrl);
 const imageURL = new URL(image, SITE.siteUrl);
 ---
 
