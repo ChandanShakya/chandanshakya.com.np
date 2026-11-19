@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 
 export default defineConfig({
   site: 'https://chandanshakya.com.np',
+  trailingSlash: 'always',
   prefetch: false,
   integrations: [
     sitemap({

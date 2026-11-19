@@ -1,6 +1,7 @@
 export const SITE = {
-  title: 'Chandan Shakya — Full Stack Web Developer | Laravel, Livewire & PHP',
-  description: 'Personal Portfolio and Blog of Chandan Shakya — Full Stack Web Developer.',
+  title: 'Chandan Shakya',
+  homepageTitle: 'Chandan Shakya — Full Stack Web Developer | Laravel, Livewire & PHP',
+  description: 'Portfolio of Chandan Shakya, a full stack web developer building reliable web applications with Laravel, Livewire, and PHP.',
   author: 'Chandan Shakya',
   siteUrl: 'https://chandanshakya.com.np',
   skills: 'Full Stack Web Developer',
@@ -9,9 +10,9 @@ export const SITE = {
 
 export const NAVIGATION = [
   { label: 'Home', href: '/' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Archive', href: '/archive' },
+  { label: 'Projects', href: '/projects/' },
+  { label: 'Blog', href: '/blog/' },
+  { label: 'Archive', href: '/archive/' },
 ];
 
 export const SOCIAL_LINKS = [

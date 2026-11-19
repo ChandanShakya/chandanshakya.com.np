@@ -33,7 +33,7 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
           <ul class="plain">
             {s.items.map((item) => (
               <li>
-                <a href={`/${s.base}/${item.id}`}>{item.data.title}</a>
+                <a href={`/${s.base}/${item.id}/`}>{item.data.title}</a>
                 {' '}<span class="meta">{formatDate(item.data.date)}</span>
               </li>
             ))}

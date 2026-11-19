@@ -10,13 +10,13 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: `Projects | ${SITE.title}`,
-  url: `${SITE.siteUrl}/projects`,
+  url: `${SITE.siteUrl}/projects/`,
   mainEntity: {
     '@type': 'ItemList',
     itemListElement: projects.map((project, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `${SITE.siteUrl}/projects/${project.id}`,
+      url: `${SITE.siteUrl}/projects/${project.id}/`,
       name: project.data.title,
     })),
   },
@@ -31,7 +31,7 @@ function fmtCommits(n: number): string {
 }
 ---
 
-<BaseLayout title="Projects" description={`Projects by ${SITE.author}`}>
+<BaseLayout title="Projects" description="Explore Chandan Shakya's open-source and client web projects built with Laravel, Livewire, PHP, JavaScript, Astro, and Docker.">
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Projects</h1>
   <p class="meta">{projects.length} projects across {categories.length} categories</p>
@@ -46,7 +46,7 @@ function fmtCommits(n: number): string {
   <ul class="plain" id="projects-list">
     {projects.map((project) => (
       <li data-categories={project.data.category}>
-        <a href={`/projects/${project.id}`}>{project.data.title}</a>
+        <a href={`/projects/${project.id}/`}>{project.data.title}</a>
         <span class="meta">{' '}— {project.data.category}</span>
         <span class="commit-badge">{fmtCommits(project.data.commits || 0)}</span>
       </li>

@@ -19,9 +19,9 @@ export async function GET() {
     '',
     '## Key Sections',
     ...[
-      `- [Projects](${SITE.siteUrl}/projects) — ${projects.length} projects`,
-      `- [Blog](${SITE.siteUrl}/blog) — ${posts.length} technical articles`,
-      `- [Archive](${SITE.siteUrl}/archive) — Complete timeline of all content`,
+      `- [Projects](${SITE.siteUrl}/projects/) — ${projects.length} projects`,
+      `- [Blog](${SITE.siteUrl}/blog/) — ${posts.length} technical articles`,
+      `- [Archive](${SITE.siteUrl}/archive/) — Complete timeline of all content`,
     ],
     '',
     '## Latest Posts',

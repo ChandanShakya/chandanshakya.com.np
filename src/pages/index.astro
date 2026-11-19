@@ -40,15 +40,15 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'WebSite',
-      url: SITE.siteUrl,
+      url: `${SITE.siteUrl}/`,
       name: SITE.title,
       description: SITE.description,
-      author: { '@type': 'Person', name: SITE.author, url: SITE.siteUrl },
+      author: { '@type': 'Person', name: SITE.author, url: `${SITE.siteUrl}/` },
     },
     {
       '@type': 'Person',
       name: SITE.author,
-      url: SITE.siteUrl,
+      url: `${SITE.siteUrl}/`,
       jobTitle: SITE.skills,
       homeLocation: 'Kathmandu, Nepal',
       sameAs: [
@@ -71,13 +71,13 @@ const jsonLd = {
     <ul class="plain">
       {featured.map((project) => (
         <li>
-          <a href={`/projects/${project.id}`}>{project.data.title}</a>
+          <a href={`/projects/${project.id}/`}>{project.data.title}</a>
           <span class="meta">{' '}— {project.data.category}</span>
           <span class="commit-badge">{fmtCommits(project.data.commits || 0)}</span>
         </li>
       ))}
     </ul>
-    <p><a href="/projects">View all projects →</a></p>
+    <p><a href="/projects/">View all projects →</a></p>
   </section>
 
   <hr />
