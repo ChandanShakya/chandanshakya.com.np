@@ -1,10 +1,10 @@
 # Old blog permalogs -> new /blog/ paths
-/api-first-livewire-architecture  /blog/api-first-livewire-architecture/  301
-/laravel-livewire-coding-standards /blog/laravel-livewire-coding-standards/ 301
-/laravel-trait-audit-fields       /blog/laravel-trait-audit-fields/       301
-/car-driving-license-nepal        /blog/car-driving-license-nepal/        301
-/discord-dark-css                 /blog/discord-dark-css/                 301
-/mysql-convention-for-laravel     /blog/mysql-convention-for-laravel/     301
-/redmi-note-10s-lineage           /blog/redmi-note-10s-lineage/           301
-/ten-things-i-hate-about-you      /blog/ten-things-i-hate-about-you/      301
-/welcome-to-my-blog               /blog/welcome-to-my-blog/               301
+/api-first-livewire-architecture  /blog/2026-01-13-api-first-livewire-architecture/  301
+/laravel-livewire-coding-standards /blog/2026-01-13-laravel-livewire-coding-standards/ 301
+/laravel-trait-audit-fields       /blog/2026-01-13-laravel-trait-audit-fields/       301
+/car-driving-license-nepal        /blog/2025-10-12-car-driving-license-nepal/        301
+/discord-dark-css                 /blog/2024-12-11-discord-dark-css/                 301
+/mysql-convention-for-laravel     /blog/2024-06-26-mysql-convention-for-laravel/     301
+/redmi-note-10s-lineage           /blog/2023-11-23-redmi-note-10s-lineage/           301
+/ten-things-i-hate-about-you      /blog/2022-09-13-ten-things-i-hate-about-you/      301
+/welcome-to-my-blog               /blog/2022-09-10-welcome-to-my-blog/               301
