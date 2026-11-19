@@ -6,6 +6,9 @@ export default defineConfig({
   site: 'https://chandanshakya.com.np',
   trailingSlash: 'always',
   prefetch: false,
+  build: {
+    inlineStylesheets: 'always',
+  },
   integrations: [
     sitemap({
       serialize(item) {
