@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { extname, join, relative } from 'node:path';
 
 const root = process.cwd();
 const dist = join(root, 'dist');
@@ -26,6 +26,52 @@ function checkUrl(value, file, kind) {
   if (pathname === '/' || pathname.endsWith('/') || pathname.includes('*')) return;
   if (/\.[a-z0-9]+$/i.test(pathname)) return;
   failures.push(`${relative(root, file)}: ${kind} lacks trailing slash: ${value}`);
+}
+
+function outputFile(pathname) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(pathname).replace(/^\/+/, '');
+  } catch {
+    return null;
+  }
+  const candidate = join(dist, decoded);
+  if (decoded === '404/' && existsSync(join(dist, '404.html'))) return join(dist, '404.html');
+  if (extname(candidate)) return existsSync(candidate) ? candidate : null;
+  const index = join(candidate, 'index.html');
+  if (existsSync(index)) return index;
+  return existsSync(join(dist, `${decoded}.html`)) ? join(dist, `${decoded}.html`) : null;
+}
+
+function checkInternalLink(value, file) {
+  let url;
+  try {
+    url = new URL(value, 'https://chandanshakya.com.np/');
+  } catch {
+    failures.push(`${relative(root, file)}: malformed href: ${value}`);
+    return;
+  }
+  if (url.origin !== 'https://chandanshakya.com.np') return;
+
+  const target = value.startsWith('#') ? file : outputFile(url.pathname);
+  if (!target) {
+    failures.push(`${relative(root, file)}: internal href target not found: ${value}`);
+    return;
+  }
+  if (!url.hash || !target.endsWith('.html')) return;
+
+  let fragment;
+  try {
+    fragment = decodeURIComponent(url.hash.slice(1));
+  } catch {
+    failures.push(`${relative(root, file)}: malformed href fragment: ${value}`);
+    return;
+  }
+  const html = readFileSync(target, 'utf8');
+  const ids = [...html.matchAll(/\sid\s*=\s*(["'])(.*?)\1/g)].map((match) => decodeHtml(match[2]));
+  if (!ids.includes(fragment)) {
+    failures.push(`${relative(root, file)}: internal href fragment not found: ${value}`);
+  }
 }
 
 function internalUrl(value) {
@@ -79,8 +125,14 @@ try {
       failures.push(`${relative(root, file)}: title exceeds 60 characters (${title.length})`);
     }
     for (const match of html.matchAll(/href\s*=\s*(["'])(.*?)\1/g)) {
-      const pathname = internalUrl(decodeHtml(match[2]));
-      if (pathname) checkUrl(pathname, file, 'href');
+      const href = decodeHtml(match[2]);
+      const pathname = internalUrl(href);
+      if (pathname) {
+        checkUrl(pathname, file, 'href');
+        checkInternalLink(pathname, file);
+      } else if (href.startsWith('#')) {
+        checkInternalLink(href, file);
+      }
     }
   }
   if (homepageTitleCount !== 1) {
