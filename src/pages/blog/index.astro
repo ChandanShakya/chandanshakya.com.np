@@ -10,13 +10,13 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: `Blog | ${SITE.title}`,
-  url: `${SITE.siteUrl}/blog`,
+  url: `${SITE.siteUrl}/blog/`,
   mainEntity: {
     '@type': 'ItemList',
     itemListElement: posts.map((post, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `${SITE.siteUrl}/blog/${post.id}`,
+      url: `${SITE.siteUrl}/blog/${post.id}/`,
       name: post.data.title,
     })),
   },
@@ -29,7 +29,7 @@ const jsonLd = {
   <ul class="plain">
     {posts.map((post) => (
       <li>
-        <a href={`/blog/${post.id}`}>{post.data.title}</a>
+        <a href={`/blog/${post.id}/`}>{post.data.title}</a>
         <div class="meta">
           <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
           {` — ${post.data.tags.join(', ')}`}

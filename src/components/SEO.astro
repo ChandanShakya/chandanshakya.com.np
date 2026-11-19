@@ -9,16 +9,23 @@ interface Props {
 }
 
 const { title, description = SITE.description, type = 'website', image = '/og-image.png' } = Astro.props;
-const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
-const canonicalURL = new URL(Astro.url.pathname, SITE.siteUrl);
+const titleSuffix = ` | ${SITE.brand}`;
+const shortTitle = title && title.length + titleSuffix.length > 60
+  ? `${title.slice(0, 59 - titleSuffix.length).trimEnd()}…`
+  : title;
+const pageTitle = shortTitle ? `${shortTitle}${titleSuffix}` : SITE.homepageTitle;
+const is404 = Astro.url.pathname === '/404/' || Astro.url.pathname === '/404.html';
+const canonicalPath = is404 ? '/404.html' : Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, SITE.siteUrl);
+const robots = is404 ? 'noindex, follow' : 'index, follow';
 const imageURL = new URL(image, SITE.siteUrl);
 ---
 
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={SITE.author} />
-<link rel="canonical" href={canonicalURL} />
-<meta name="robots" content="index, follow" />
+{!is404 && <link rel="canonical" href={canonicalURL} />}
+<meta name="robots" content={robots} />
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
 <meta property="og:type" content={type} />

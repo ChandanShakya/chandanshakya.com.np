@@ -19,6 +19,8 @@ const { title, description, type = 'website' } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <SEO title={title} description={description} type={type} />
     <style is:inline set:html={globalCss} />
     <script is:inline>
@@ -34,8 +36,8 @@ const { title, description, type = 'website' } = Astro.props;
     <script type="speculationrules">
       {
         "prerender": [
-          { "where": { "href_matches": "/projects/*" }, "eagerness": "conservative" },
-          { "where": { "href_matches": "/blog/*" }, "eagerness": "conservative" }
+          { "where": { "href_matches": "/projects/*/" }, "eagerness": "conservative" },
+          { "where": { "href_matches": "/blog/*/" }, "eagerness": "conservative" }
         ]
       }
     </script>
