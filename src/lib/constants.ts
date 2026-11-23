@@ -13,6 +13,7 @@ export const NAVIGATION = [
   { label: 'Home', href: '/' },
   { label: 'Projects', href: '/projects/' },
   { label: 'Blog', href: '/blog/' },
+  { label: 'Photography', href: '/photography/' },
   { label: 'Archive', href: '/archive/' },
 ];
 
