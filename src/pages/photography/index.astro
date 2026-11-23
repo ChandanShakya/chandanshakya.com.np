@@ -18,12 +18,21 @@ const deviceFilters = devices.map((device) => ({
   image: device.data.image,
   count: photos.filter((p) => p.data.device === device.id).length,
 }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Photography | ${SITE.title}`,
+  url: `${SITE.siteUrl}/photography/`,
+  author: { '@type': 'Person', name: SITE.author, url: `${SITE.siteUrl}/` },
+};
 ---
 
 <BaseLayout
   title="Photography"
-  description="Photography and digital art by Chandan Shakya — captured on a Samsung Galaxy S23 Ultra and created with digital tools, served as optimized WebP."
+  description="Photography and digital art by Chandan Shakya, shot on a Samsung Galaxy S23 Ultra and created with digital tools."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Photography</h1>
   <p class="meta">
     {photos.length} {photos.length === 1 ? 'item' : 'items'} — photography and digital art.
