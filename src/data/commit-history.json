@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T07:50:29.616Z",
+  "generatedAt": "2026-11-23T08:39:26.306Z",
   "weeks": [
     {
       "week": 1763856000,
@@ -444,10 +444,10 @@
     },
     {
       "week": 1795305600,
-      "total": 6,
+      "total": 8,
       "repos": {
         "nccs-sms-bachelors": 3,
-        "goldmandu": 1,
+        "goldmandu": 3,
         "nccs-cas": 2
       }
     }
