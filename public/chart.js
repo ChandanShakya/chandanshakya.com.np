@@ -233,31 +233,31 @@
         });
         // Totals + peak + aria
         var sum = 0, projectCount = 0;
+        // Month index for weekly views: find which monthLabels entry matches targetLabel.
+        var monthIdx = -1;
+        if (!frame.monthlyMode) {
+          var shortMonth = (frame.targetLabel || '').split(' ')[0];
+          monthIdx = monthLabels.indexOf(shortMonth);
+        }
         visible.forEach(function (c) {
-          sum += c.arr.reduce(function (a, b) { return a + b; }, 0);
-          // Per-bucket distinct projects with commits in the current view.
-          var pm = frame.monthlyMode
-            ? JSON.parse(c.btn.getAttribute('data-projects-monthly') || '[]')
-            : JSON.parse(c.btn.getAttribute('data-projects-weekly') || '[]');
-          var buckets = frame.monthlyMode
-            ? pm
-            : (frame.real ? pm.filter(function (_, i) { return frame.real[i]; }) : pm);
-          // weekly: only count weeks in the real (non-anchor) selection
-          if (!frame.monthlyMode && frame.real) {
-            var realIdx = [];
-            frame.real.forEach(function (r, i) { if (r) realIdx.push(i); });
-            // pm is per original week; rebuild per real week
-            var weeklyFull = JSON.parse(c.btn.getAttribute('data-projects-weekly') || '[]');
-            var realWeeks = [];
-            frame.real.forEach(function (r, i) { if (r) realWeeks.push(weeklyFull[i - 1]); });
-            buckets = realWeeks;
+          var seriesSum = c.arr.reduce(function (a, b) { return a + b; }, 0);
+          sum += seriesSum;
+          var isOthers = c.btn.getAttribute('data-legend') === '__others__';
+          if (isOthers) {
+            if (frame.monthlyMode) {
+              // full window: all distinct others projects
+              if (seriesSum > 0) projectCount += parseInt(c.btn.getAttribute('data-projects') || '0', 10);
+            } else {
+              // weekly: distinct others in this month
+              var pmArr = JSON.parse(c.btn.getAttribute('data-projects-monthly') || '[]');
+              if (monthIdx >= 0 && monthIdx < pmArr.length) {
+                projectCount += (pmArr[monthIdx] || 0);
+              }
+            }
+          } else {
+            // named series: count 1 if it has any commits in this view
+            if (seriesSum > 0) projectCount += 1;
           }
-          var cnt = 0;
-          buckets.forEach(function (n) { if ((n || 0) > 0) cnt += (n || 0); });
-          // For named series, the per-bucket value is 0/1 already; for Others it's a count.
-          // But named series may have 0 in a bucket -> not counted. Sum the bucket values
-          // (0/1 for named, distinct-count for Others) -> total distinct projects in view.
-          projectCount += cnt;
         });
         var rangeText;
         if (frame.monthlyMode) {
