@@ -58,6 +58,8 @@ interface Series extends ChartItem {
   count?: number;
   monthly: number[];
   weekly: number[];
+  monthlyProjects: number[];
+  weeklyProjects: number[];
   windowTotal: number;
 }
 
@@ -227,6 +229,32 @@ if (hasHistory) {
       return n;
     });
 
+  // Per-bucket distinct-project counts (for the "across X projects" label).
+  // Named series: 1 in a bucket iff it has commits there.
+  // Others: number of distinct other projects with commits in that bucket.
+  const monthlyProjectsFor = (id: string | null): number[] =>
+    keys.map((k) => {
+      if (id !== null) {
+        return monthlyFor(id)[keys.indexOf(k)] > 0 ? 1 : 0;
+      }
+      let set = new Set<string>();
+      for (const wi of buckets.get(k)!.weekIdx) {
+        const w = weeks[wi];
+        for (const slug of othersSlugs) if ((w.repos[slug] || 0) > 0) set.add(slug);
+      }
+      return set.size;
+    });
+
+  const weeklyProjectsFor = (id: string | null): number[] =>
+    weeks.map((w) => {
+      if (id !== null) {
+        return (w.repos[id] || 0) > 0 ? 1 : 0;
+      }
+      let set = new Set<string>();
+      for (const slug of othersSlugs) if ((w.repos[slug] || 0) > 0) set.add(slug);
+      return set.size;
+    });
+
   series = topIds.map((id) => {
     const monthly = monthlyFor(id);
     return {
@@ -235,6 +263,8 @@ if (hasHistory) {
       commits: sorted.find((p) => p.id === id)?.commits ?? 0,
       monthly,
       weekly: weeklyFor(id),
+      monthlyProjects: monthlyProjectsFor(id),
+      weeklyProjects: weeklyProjectsFor(id),
       windowTotal: monthly.reduce((a, b) => a + b, 0),
     };
   });
@@ -249,6 +279,8 @@ if (hasHistory) {
       count: othersSlugs.size,
       monthly: othersMonthly,
       weekly: weeklyFor(null),
+      monthlyProjects: monthlyProjectsFor(null),
+      weeklyProjects: weeklyProjectsFor(null),
       windowTotal: othersMonthly.reduce((a, b) => a + b, 0),
     });
   }
@@ -337,6 +369,8 @@ if (hasHistory) {
           data-monthly={JSON.stringify(s.monthly)}
           data-weekly={JSON.stringify(s.weekly)}
           data-projects={s.isOthers ? (s.count ?? 0) : 1}
+          data-projects-monthly={JSON.stringify((s as any).monthlyProjects ?? [])}
+          data-projects-weekly={JSON.stringify((s as any).weeklyProjects ?? [])}
           aria-pressed="true"
           title={`${s.title} — ${fmt(s.windowTotal)} commits in window`}
         >
