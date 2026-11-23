@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { Picture, Image } from 'astro:assets';
+import { SITE } from '../../lib/constants';
+
+const devices = await getCollection('devices');
+const photos = (await getCollection('photos')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const photoCount = photos.filter((p) => p.data.kind === 'photo').length;
+const artCount = photos.filter((p) => p.data.kind === 'digital-art').length;
+
+const deviceFilters = devices.map((device) => ({
+  id: device.id,
+  name: device.data.name,
+  image: device.data.image,
+  count: photos.filter((p) => p.data.device === device.id).length,
+}));
+---
+
+<BaseLayout
+  title="Photography"
+  description="Photography and digital art by Chandan Shakya — captured on a Samsung Galaxy S23 Ultra and created with digital tools, served as optimized WebP."
+>
+  <h1>Photography</h1>
+  <p class="meta">
+    {photos.length} {photos.length === 1 ? 'item' : 'items'} — photography and digital art.
+  </p>
+
+  <div class="filter-row" role="group" aria-label="Filter by kind">
+    <button type="button" class="filter-btn" data-kind-filter="all" aria-pressed="true">
+      All ({photos.length})
+    </button>
+    <button type="button" class="filter-btn" data-kind-filter="photo" aria-pressed="false">
+      Photos ({photoCount})
+    </button>
+    <button type="button" class="filter-btn" data-kind-filter="digital-art" aria-pressed="false">
+      Digital Art ({artCount})
+    </button>
+  </div>
+
+  <div class="filter-row device-filters" role="group" aria-label="Filter by device">
+    <button type="button" class="filter-btn device-chip" data-device-filter="all" aria-pressed="true">
+      All devices ({photos.length})
+    </button>
+    {deviceFilters.map((device) => (
+      <button
+        type="button"
+        class="filter-btn device-chip"
+        data-device-filter={device.id}
+        aria-pressed="false"
+      >
+        {device.image ? (
+          <Image
+            src={device.image}
+            width={32}
+            height={32}
+            formats={['webp', 'jpeg']}
+            quality={80}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            style={`aspect-ratio: ${device.image.width} / ${device.image.height};`}
+          />
+        ) : (
+          <span class="device-placeholder" aria-hidden="true">no img</span>
+        )}
+        <span>{device.name}</span>
+        <span class="count">({device.count})</span>
+      </button>
+    ))}
+  </div>
+
+  {photos.length === 0 && (
+    <p class="empty-state" id="empty-all">No photos yet.</p>
+  )}
+
+  <ul class="photo-grid" id="photo-grid">
+    {photos.map((photo, index) => (
+      <li
+        class="photo-card"
+        data-kind={photo.data.kind}
+        data-device={photo.data.device}
+      >
+        <figure>
+          <Picture
+            src={photo.data.image}
+            formats={['webp', 'jpeg']}
+            widths={[400, 800, 1200, 1600]}
+            quality={80}
+            sizes="(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw"
+            alt={photo.data.title}
+            loading={index < 2 ? 'eager' : 'lazy'}
+            fetchpriority={index < 2 ? 'high' : undefined}
+            decoding="async"
+            style={`aspect-ratio: ${photo.data.image.width} / ${photo.data.image.height};`}
+          />
+          <figcaption>
+            <strong>{photo.data.title}</strong>
+            {photo.data.caption && <span class="caption"> — {photo.data.caption}</span>}
+            <div class="meta">
+              {photo.data.location && <span>{photo.data.location} · </span>}
+              <time datetime={photo.data.date.toISOString()}>
+                {photo.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </time>
+            </div>
+          </figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+
+  <p class="empty-state" id="empty-filtered" hidden>No photos match these filters.</p>
+  <div id="scroll-sentinel" class="sentinel" aria-hidden="true"></div>
+
+  <script is:inline>
+    (function () {
+      var grid = document.getElementById('photo-grid');
+      if (!grid) return;
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.photo-card'));
+      var sentinel = document.getElementById('scroll-sentinel');
+      var emptyFiltered = document.getElementById('empty-filtered');
+      var emptyAll = document.getElementById('empty-all');
+      var PAGE_SIZE = 12;
+      var kindFilter = 'all';
+      var deviceFilter = 'all';
+      var visibleCount = PAGE_SIZE;
+
+      function matches(card) {
+        var kind = card.getAttribute('data-kind');
+        var device = card.getAttribute('data-device');
+        var kindOk = kindFilter === 'all' || kind === kindFilter;
+        var deviceOk = deviceFilter === 'all' || device === deviceFilter;
+        return kindOk && deviceOk;
+      }
+
+      function apply() {
+        var filtered = cards.filter(matches);
+        var shown = 0;
+        cards.forEach(function (card) {
+          if (!matches(card)) {
+            card.hidden = true;
+            return;
+          }
+          if (shown < visibleCount) {
+            card.hidden = false;
+            shown += 1;
+          } else {
+            card.hidden = true;
+          }
+        });
+        if (emptyFiltered) {
+          emptyFiltered.hidden = !(filtered.length === 0 && cards.length > 0);
+        }
+        if (emptyAll) {
+          emptyAll.hidden = cards.length !== 0;
+        }
+        if (sentinel) {
+          sentinel.hidden = filtered.length <= visibleCount;
+        }
+      }
+
+      function resetAndApply() {
+        visibleCount = PAGE_SIZE;
+        apply();
+      }
+
+      function setPressed(selector, value) {
+        document.querySelectorAll(selector).forEach(function (btn) {
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-kind-filter') === value || btn.getAttribute('data-device-filter') === value ? 'true' : 'false');
+        });
+      }
+
+      document.querySelectorAll('[data-kind-filter]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          kindFilter = btn.getAttribute('data-kind-filter') || 'all';
+          setPressed('[data-kind-filter]', kindFilter);
+          resetAndApply();
+        });
+      });
+
+      document.querySelectorAll('[data-device-filter]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          deviceFilter = btn.getAttribute('data-device-filter') || 'all';
+          setPressed('[data-device-filter]', deviceFilter);
+          resetAndApply();
+        });
+      });
+
+      if (sentinel && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var filteredCount = cards.filter(matches).length;
+            if (visibleCount >= filteredCount) return;
+            visibleCount = Math.min(visibleCount + PAGE_SIZE, filteredCount);
+            apply();
+          });
+        }, { rootMargin: '300px 0px' });
+        io.observe(sentinel);
+      }
+
+      apply();
+    })();
+  </script>
+
+  <style>
+    .photo-grid {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 600px) {
+      .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 900px) {
+      .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .photo-card[hidden] { display: none; }
+    .photo-card figure {
+      margin: 0;
+      border: var(--border-width) solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .photo-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .photo-card figcaption {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+    .photo-card figcaption strong {
+      display: block;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      font-size: 0.85rem;
+    }
+    .caption { color: var(--muted); }
+    .empty-state { color: var(--muted); }
+    .device-filters { align-items: center; }
+    .device-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .device-chip img {
+      width: 1.5rem;
+      height: 1.5rem;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+    .device-placeholder {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 2px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .count { color: var(--muted); font-weight: 400; }
+    .sentinel { height: 1px; }
+    .sentinel[hidden] { display: none; }
+  </style>
+</BaseLayout>

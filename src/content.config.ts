@@ -27,4 +27,26 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { blog, projects };
+const devices = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/devices' }),
+  schema: ({ image }) => z.object({
+    name: z.string(),
+    image: image().optional(),
+    description: z.string(),
+  }),
+});
+
+const photos = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/photos' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    image: image(),
+    device: z.string(),
+    kind: z.enum(['photo', 'digital-art']),
+    date: z.coerce.date(),
+    location: z.string().optional(),
+    caption: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, projects, devices, photos };
