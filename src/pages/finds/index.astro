@@ -169,7 +169,7 @@ const jsonLd = {
     .find-body { display: block; padding: 0.5rem 0.6rem; }
     .kicker { display: block; color: var(--muted); font-size: 0.75rem; }
     .find-title { display: block; margin-top: 0.15rem; line-height: 1.3; font-size: 0.95rem; }
-    /* Long notes are clamped to 4 lines; full text shows on hover/focus and is always in the page source. */
+    /* Long notes are clamped to 4 lines; the full text is on the detail page. */
     .note {
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -178,7 +178,6 @@ const jsonLd = {
       overflow: hidden;
       margin-top: 0.3rem; color: var(--muted); font-size: 0.85rem; line-height: 1.4;
     }
-    .find-link:hover .note, .find-link:focus-visible .note { -webkit-line-clamp: unset; line-clamp: unset; }
     .find-title { overflow-wrap: anywhere; }
     .find-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0; padding: 0 0.6rem 0.5rem; }
     .find-tags { color: var(--muted); font-size: 0.75rem; }
