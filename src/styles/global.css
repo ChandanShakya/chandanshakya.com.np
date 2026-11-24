@@ -57,10 +57,15 @@ body {
   font-size: 18px;
   line-height: 1.65;
   overflow-wrap: break-word;
+  /* Sticky footer: main grows so the footer sits at the viewport bottom on short pages. */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1rem; }
-main.wrap { padding-top: 1rem; padding-bottom: 3rem; }
+main.wrap { flex: 1 0 auto; width: 100%; box-sizing: border-box; padding-top: 1rem; padding-bottom: 3rem; }
 
 /* Page title row: title left, counts right */
 .page-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.35rem; margin: 0 0 0.75rem; }

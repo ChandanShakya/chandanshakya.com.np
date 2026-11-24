@@ -166,7 +166,17 @@ const jsonLd = {
     .find-body { display: block; padding: 0.5rem 0.6rem; }
     .kicker { display: block; color: var(--muted); font-size: 0.75rem; }
     .find-title { display: block; margin-top: 0.15rem; line-height: 1.3; font-size: 0.95rem; }
-    .note { display: block; margin-top: 0.3rem; color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+    /* Long notes are clamped to 4 lines; full text shows on hover/focus and is always in the page source. */
+    .note {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
+      overflow: hidden;
+      margin-top: 0.3rem; color: var(--muted); font-size: 0.85rem; line-height: 1.4;
+    }
+    .find-link:hover .note, .find-link:focus-visible .note { -webkit-line-clamp: unset; line-clamp: unset; }
+    .find-title { overflow-wrap: anywhere; }
     .find-tags { margin: 0; padding: 0 0.6rem 0.5rem; color: var(--muted); font-size: 0.75rem; }
     .empty-state { color: var(--muted); }
   </style>
