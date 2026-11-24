@@ -60,7 +60,12 @@ body {
 }
 
 .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1rem; }
-main.wrap { padding-top: 1.5rem; padding-bottom: 3rem; }
+main.wrap { padding-top: 1rem; padding-bottom: 3rem; }
+
+/* Page title row: title left, counts right */
+.page-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.35rem; margin: 0 0 0.75rem; }
+.page-head h1 { margin: 0; font-size: 1.5rem; }
+.page-head .meta { font-size: 0.85rem; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-mono);
@@ -88,17 +93,16 @@ a.btn:visited { color: var(--bg); }
 .hero h1 { margin: 0 0 0.25rem; }
 .hero p { margin: 0.4rem 0; }
 .site-header { border-bottom: var(--border-width) solid var(--border); background: var(--bg); }
-.site-header .wrap { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; padding-top: 0.75rem; padding-bottom: 0.75rem; }
-.site-title { font-family: var(--font-mono); font-weight: 700; color: var(--fg); text-decoration: none; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; align-items: center; }
+.site-header .wrap { display: flex; align-items: center; gap: 0 1rem; padding-top: 0.4rem; padding-bottom: 0.4rem; }
+.site-title { font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; color: var(--fg); text-decoration: none; margin-right: auto; white-space: nowrap; }
+.site-nav { display: flex; gap: 0 1rem; align-items: center; font-size: 0.95rem; }
 .site-nav a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
-#theme-toggle { font: inherit; font-size: 1rem; background: var(--bg); color: var(--fg); border: 2px solid var(--border); padding: 0.4rem 0.7rem; cursor: pointer; min-width: 12ch; text-align: center; white-space: nowrap; }
+#theme-toggle { font: inherit; font-size: 0.9rem; line-height: 1; background: var(--bg); color: var(--fg); border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border); padding: 0.25rem 0.5rem; cursor: pointer; text-transform: none; }
 #theme-toggle:hover { background: var(--fg); color: var(--bg); }
 @media (max-width: 560px) {
-  .site-header .wrap { flex-direction: column; align-items: stretch; }
-  .site-nav { justify-content: space-between; }
-  .site-nav a { padding: 0.5rem 0; }
-  #theme-toggle { width: 100%; margin-top: 0.25rem; }
+  .site-header .wrap { flex-wrap: wrap; }
+  .site-title { flex: 1; }
+  .site-nav { order: 3; flex-basis: 100%; overflow-x: auto; white-space: nowrap; padding: 0.35rem 0; }
 }
 
 /* Lists, meta */
@@ -145,8 +149,8 @@ button:hover, .btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0
 }
 
 /* Filter buttons (projects page, tiny progressive-enhancement JS) */
-.filter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
-.filter-btn { background: var(--bg); color: var(--fg); padding: 0.5rem 0.8rem; font-size: 0.9rem; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0 1rem; }
+.filter-btn { background: var(--bg); color: var(--fg); padding: 0.15rem 0.5rem; font-size: 0.75rem; box-shadow: 2px 2px 0 var(--border); }
 .filter-btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 /* Compact filter toolbar (photography, finds) */
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; margin: 0.5rem 0 1rem; }

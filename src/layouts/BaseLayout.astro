@@ -54,7 +54,7 @@ const { title, description, type = 'website' } = Astro.props;
         var btn = document.getElementById('theme-toggle');
         function label() {
           var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-          btn.textContent = dark ? 'light mode' : 'dark mode';
+          btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
           btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
         }
         label();

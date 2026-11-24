@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../lib/constants';
 import { formatDate, sortDesc } from '../../lib/utils';
@@ -25,7 +26,7 @@ const jsonLd = {
 
 <BaseLayout title="Blog" description="Technical articles by Chandan Shakya on Laravel, Livewire and PHP — practical guides, coding standards, and lessons from real projects in Kathmandu.">
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>Blog</h1>
+  <PageHead title="Blog" meta={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} />
   <ul class="plain">
     {posts.map((post) => (
       <li>

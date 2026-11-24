@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { formatDate, sortDesc } from '../lib/utils';
 import { SITE } from '../lib/constants';
@@ -19,7 +20,7 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
 ---
 
 <BaseLayout title="Archive" description={`Archive of all posts and projects by ${SITE.author}`}>
-  <h1>Archive</h1>
+  <PageHead title="Archive" meta={`${blogPosts.length} posts · ${projects.length} projects`} />
   {years.map((year, i) => (
     <section>
       {i > 0 && <hr />}

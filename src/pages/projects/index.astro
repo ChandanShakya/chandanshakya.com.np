@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../lib/constants';
 import { sortDesc } from '../../lib/utils';
@@ -33,8 +34,7 @@ function fmtCommits(n: number): string {
 
 <BaseLayout title="Projects" description="Projects by Chandan Shakya — Laravel and Livewire web apps, including the NCCS Software Suite, student management systems, and open-source tools.">
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>Projects</h1>
-  <p class="meta">{projects.length} projects across {categories.length} categories</p>
+  <PageHead title="Projects" meta={`${projects.length} projects · ${categories.length} categories`} />
 
   <div class="filter-row" id="filter-tabs" role="group" aria-label="Filter projects by category">
     <button type="button" class="filter-btn" data-filter="all" aria-pressed="true">All</button>

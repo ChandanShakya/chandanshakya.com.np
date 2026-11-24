@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../lib/constants';
 import { formatDate } from '../../lib/utils';
@@ -42,8 +43,7 @@ const jsonLd = {
   description="Videos, articles and links Chandan Shakya found interesting on the internet, with a note on why each is worth a look."
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>Finds</h1>
-  <p class="meta">Videos, articles and links I found worth sharing.</p>
+  <PageHead title="Finds" meta={`${finds.length} ${finds.length === 1 ? 'find' : 'finds'}`} />
 
   {(kinds.length > 1 || tags.length > 0) && (
     <div class="toolbar">
