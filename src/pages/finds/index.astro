@@ -94,9 +94,12 @@ const jsonLd = {
               {find.data.note && <span class="note">{find.data.note}</span>}
             </span>
           </a>
-          {find.data.tags.length > 0 && (
-            <p class="find-tags">{find.data.tags.map((t) => `#${t}`).join(' ')}</p>
-          )}
+          <p class="find-foot">
+            <span class="find-tags">{find.data.tags.map((t) => `#${t}`).join(' ')}</span>
+            <a class="find-ext" href={find.data.url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${find.data.title} on ${host(find.data.url)}`}>
+              {find.data.kind === 'video' ? 'Watch' : 'Open'} ↗
+            </a>
+          </p>
         </li>
       );
     })}
@@ -177,7 +180,9 @@ const jsonLd = {
     }
     .find-link:hover .note, .find-link:focus-visible .note { -webkit-line-clamp: unset; line-clamp: unset; }
     .find-title { overflow-wrap: anywhere; }
-    .find-tags { margin: 0; padding: 0 0.6rem 0.5rem; color: var(--muted); font-size: 0.75rem; }
+    .find-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0; padding: 0 0.6rem 0.5rem; }
+    .find-tags { color: var(--muted); font-size: 0.75rem; }
+    .find-ext { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
     .empty-state { color: var(--muted); }
   </style>
 </BaseLayout>
