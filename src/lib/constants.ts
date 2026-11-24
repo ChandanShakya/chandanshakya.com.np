@@ -14,6 +14,7 @@ export const NAVIGATION = [
   { label: 'Projects', href: '/projects/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'Photos', href: '/photography/' },
+  { label: 'Finds', href: '/finds/' },
   { label: 'Archive', href: '/archive/' },
 ];
 

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "node scripts/check-seo.mjs",
+    "postbuild": "node scripts/prune-originals.mjs && node scripts/check-seo.mjs",
     "check:seo": "node scripts/check-seo.mjs",
     "preview": "astro preview",
     "astro": "astro"

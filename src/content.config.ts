@@ -43,10 +43,23 @@ const photos = defineCollection({
     image: image(),
     device: z.string(),
     kind: z.enum(['photo', 'digital-art']),
+    order: z.number().optional(),
     date: z.coerce.date(),
     location: z.string().optional(),
     caption: z.string().optional(),
   }),
 });
 
-export const collections = { blog, projects, devices, photos };
+const finds = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/finds' }),
+  schema: z.object({
+    title: z.string(),
+    url: z.string().url().refine((u) => /^https?:\/\//i.test(u), 'url must be http(s)'),
+    kind: z.enum(['video', 'article', 'link']).default('article'),
+    tags: z.array(z.string()).default([]),
+    date: z.coerce.date(),
+    note: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, projects, devices, photos, finds };

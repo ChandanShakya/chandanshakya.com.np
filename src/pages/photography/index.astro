@@ -5,8 +5,12 @@ import { Picture, Image } from 'astro:assets';
 import { SITE } from '../../lib/constants';
 
 const devices = await getCollection('devices');
+// Manual `order` first (ascending), everything else after it, newest first.
+const rank = (p: { data: { order?: number } }) => p.data.order ?? Infinity;
 const photos = (await getCollection('photos')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  (a, b) =>
+    (rank(a) === rank(b) ? 0 : rank(a) < rank(b) ? -1 : 1) ||
+    b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
 const photoCount = photos.filter((p) => p.data.kind === 'photo').length;
@@ -18,6 +22,7 @@ const deviceFilters = devices.map((device) => ({
   image: device.data.image,
   count: photos.filter((p) => p.data.device === device.id).length,
 }));
+const deviceById = new Map(deviceFilters.map((d) => [d.id, d]));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -34,52 +39,51 @@ const jsonLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>Photography</h1>
-  <p class="meta">
-    {photos.length} {photos.length === 1 ? 'item' : 'items'} — photography and digital art.
-  </p>
 
-  <div class="filter-row" role="group" aria-label="Filter by kind">
-    <button type="button" class="filter-btn" data-kind-filter="all" aria-pressed="true">
-      All ({photos.length})
-    </button>
-    <button type="button" class="filter-btn" data-kind-filter="photo" aria-pressed="false">
-      Photos ({photoCount})
-    </button>
-    <button type="button" class="filter-btn" data-kind-filter="digital-art" aria-pressed="false">
-      Digital Art ({artCount})
-    </button>
-  </div>
-
-  <div class="filter-row device-filters" role="group" aria-label="Filter by device">
-    <button type="button" class="filter-btn device-chip" data-device-filter="all" aria-pressed="true">
-      All devices ({photos.length})
-    </button>
-    {deviceFilters.map((device) => (
-      <button
-        type="button"
-        class="filter-btn device-chip"
-        data-device-filter={device.id}
-        aria-pressed="false"
-      >
-        {device.image ? (
-          <Image
-            src={device.image}
-            width={32}
-            height={32}
-            formats={['webp', 'jpeg']}
-            quality={80}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            style={`aspect-ratio: ${device.image.width} / ${device.image.height};`}
-          />
-        ) : (
-          <span class="device-placeholder" aria-hidden="true">no img</span>
-        )}
-        <span>{device.name}</span>
-        <span class="count">({device.count})</span>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Filter by kind">
+      <button type="button" class="filter-btn" data-kind-filter="all" aria-pressed="true">
+        All <span class="count">{photos.length}</span>
       </button>
-    ))}
+      <button type="button" class="filter-btn" data-kind-filter="photo" aria-pressed="false">
+        Photos <span class="count">{photoCount}</span>
+      </button>
+      <button type="button" class="filter-btn" data-kind-filter="digital-art" aria-pressed="false">
+        Art <span class="count">{artCount}</span>
+      </button>
+    </div>
+
+    {deviceFilters.length > 1 && (
+      <div class="seg" role="group" aria-label="Filter by device">
+        <button type="button" class="filter-btn" data-device-filter="all" aria-pressed="true">
+          Any device
+        </button>
+        {deviceFilters.map((device) => (
+          <button
+            type="button"
+            class="filter-btn"
+            data-device-filter={device.id}
+            aria-pressed="false"
+            title={device.name}
+          >
+            {device.image && (
+              <Image
+                src={device.image}
+                width={40}
+                height={40}
+                formats={['webp', 'jpeg']}
+                quality={80}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="avatar"
+              />
+            )}
+            {device.name} <span class="count">{device.count}</span>
+          </button>
+        ))}
+      </div>
+    )}
   </div>
 
   {photos.length === 0 && (
@@ -92,6 +96,7 @@ const jsonLd = {
         class="photo-card"
         data-kind={photo.data.kind}
         data-device={photo.data.device}
+        style={`--r: ${(photo.data.image.width / photo.data.image.height).toFixed(4)}`}
       >
         <figure>
           <Picture
@@ -99,7 +104,7 @@ const jsonLd = {
             formats={['webp', 'jpeg']}
             widths={[400, 800, 1200, 1600]}
             quality={80}
-            sizes="(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw"
+            sizes="(min-width: 720px) 400px, 100vw"
             alt={photo.data.title}
             loading={index < 2 ? 'eager' : 'lazy'}
             fetchpriority={index < 2 ? 'high' : undefined}
@@ -108,13 +113,24 @@ const jsonLd = {
           />
           <figcaption>
             <strong>{photo.data.title}</strong>
-            {photo.data.caption && <span class="caption"> — {photo.data.caption}</span>}
-            <div class="meta">
-              {photo.data.location && <span>{photo.data.location} · </span>}
-              <time datetime={photo.data.date.toISOString()}>
-                {photo.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-              </time>
-            </div>
+            <span class="meta">
+              {deviceById.get(photo.data.device)?.image && (
+                <Image
+                  src={deviceById.get(photo.data.device)!.image!}
+                  width={32}
+                  height={32}
+                  formats={['webp', 'jpeg']}
+                  quality={80}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  class="avatar"
+                />
+              )}
+              <span>{deviceById.get(photo.data.device)?.name ?? photo.data.device}</span>
+              <span>· {photo.data.location ? `${photo.data.location} · ` : ''}<time datetime={photo.data.date.toISOString()}>{photo.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time></span>
+            </span>
+            {photo.data.caption && <span class="caption">{photo.data.caption}</span>}
           </figcaption>
         </figure>
       </li>
@@ -216,70 +232,72 @@ const jsonLd = {
   </script>
 
   <style>
+    /* Justified rows: each item's width is proportional to its aspect ratio (--r),
+       so every photo in a row gets the same height and rows fill the full width. */
     .photo-grid {
       list-style: none;
       padding: 0;
-      margin: 1.5rem 0;
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: 1fr;
+      margin: 1rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-    @media (min-width: 600px) {
-      .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (min-width: 900px) {
-      .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    /* Stops the last row from stretching a lone photo to full width. */
+    .photo-grid::after { content: ''; flex-grow: 1000000; }
+    .photo-card {
+      flex: var(--r) 1 calc(var(--r) * 12rem);
+      min-width: 0;
     }
     .photo-card[hidden] { display: none; }
     .photo-card figure {
+      position: relative;
       margin: 0;
       border: var(--border-width) solid var(--border);
       box-shadow: var(--shadow);
-      background: var(--bg);
+      background: var(--code-bg);
       overflow: hidden;
     }
-    .photo-card img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+    .photo-card img { display: block; width: 100%; height: auto; }
     .photo-card figcaption {
-      padding: 0.75rem;
-      font-size: 0.9rem;
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 1.5rem 0.5rem 0.4rem;
+      font-size: 0.7rem;
+      line-height: 1.3;
+      color: #fff;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      pointer-events: none;
     }
     .photo-card figcaption strong {
       display: block;
       font-family: var(--font-mono);
       text-transform: uppercase;
       letter-spacing: 0.02em;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .caption { color: var(--muted); }
-    .empty-state { color: var(--muted); }
-    .device-filters { align-items: center; }
-    .device-chip {
-      display: inline-flex;
+    .photo-card .meta {
+      display: flex;
       align-items: center;
-      gap: 0.4rem;
-    }
-    .device-chip img {
-      width: 1.5rem;
-      height: 1.5rem;
-      object-fit: cover;
-      border: 2px solid var(--border);
-    }
-    .device-placeholder {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      border: 2px solid var(--border);
-      font-family: var(--font-mono);
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      color: rgba(255, 255, 255, 0.85);
       font-size: 0.7rem;
-      font-weight: 700;
     }
-    .count { color: var(--muted); font-weight: 400; }
+    /* Long caption text only on hover / keyboard focus, so rows stay clean. */
+    .caption { display: none; margin-top: 0.2rem; }
+    .photo-card figure:hover .caption,
+    .photo-card figure:focus-within .caption { display: block; }
+    .empty-state { color: var(--muted); }
+    .avatar {
+      width: 1rem;
+      height: 1rem;
+      object-fit: cover;
+      border-radius: 50%;
+      flex: none;
+    }
     .sentinel { height: 1px; }
     .sentinel[hidden] { display: none; }
   </style>

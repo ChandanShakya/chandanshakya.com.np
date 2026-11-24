@@ -49,13 +49,14 @@ collections:
     format: frontmatter
     create: true
     slug: "{{slug}}"
-    media_folder: src/assets/photos
+    media_folder: /src/assets/photos
     public_folder: ../../assets/photos
     fields:
       - { name: title, label: Title, widget: string }
       - { name: image, label: Image, widget: image, required: true }
       - { name: device, label: Device, widget: relation, collection: devices, value_field: "{{slug}}", display_fields: [name], search_fields: [name], required: true }
       - { name: kind, label: Kind, widget: select, options: [{ label: Photo, value: photo }, { label: Digital Art, value: digital-art }], default: photo }
+      - { name: order, label: Order (lower shows first; blank = after ordered ones, newest first), widget: number, value_type: int, required: false }
       - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
       - { name: location, label: Location, widget: string, required: false }
       - { name: caption, label: Caption, widget: text, required: false }
@@ -68,10 +69,25 @@ collections:
     format: frontmatter
     create: true
     slug: "{{slug}}"
-    media_folder: src/assets/devices
+    media_folder: /src/assets/devices
     public_folder: ../../assets/devices
     fields:
       - { name: name, label: Name, widget: string }
       - { name: image, label: Image, widget: image, required: false }
       - { name: description, label: Description, widget: text }
       - { name: body, label: Body, widget: markdown, required: false }
+
+  - name: finds
+    label: Finds
+    folder: src/content/finds
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: url, label: Link (https://...), widget: string }
+      - { name: kind, label: Kind, widget: select, options: [{ label: Article, value: article }, { label: Video, value: video }, { label: Other link, value: link }], default: article }
+      - { name: tags, label: Tags, widget: list, default: [], required: false }
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+      - { name: note, label: Why it's interesting, widget: text, required: false }

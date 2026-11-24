@@ -148,6 +148,12 @@ button:hover, .btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0
 .filter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
 .filter-btn { background: var(--bg); color: var(--fg); padding: 0.5rem 0.8rem; font-size: 0.9rem; }
 .filter-btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+/* Compact filter toolbar (photography, finds) */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; margin: 0.5rem 0 1rem; }
+.seg { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.toolbar .filter-btn { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.5rem; font-size: 0.75rem; }
+.count { color: var(--muted); font-weight: 400; }
+.filter-btn[aria-pressed="true"] .count { color: inherit; }
 
 /* Prose */
 .prose { max-width: 100%; overflow-wrap: break-word; }

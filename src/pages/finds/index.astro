@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../lib/constants';
+import { formatDate } from '../../lib/utils';
+
+const finds = (await getCollection('finds')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const kindLabel = { video: 'Video', article: 'Article', link: 'Link' } as const;
+const kinds = (Object.keys(kindLabel) as (keyof typeof kindLabel)[])
+  .map((kind) => ({ kind, count: finds.filter((f) => f.data.kind === kind).length }))
+  .filter((k) => k.count > 0);
+const tags = [...new Set(finds.flatMap((f) => f.data.tags))].sort((a, b) => a.localeCompare(b));
+
+function host(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+
+// YouTube thumbnail (16:9, no letterbox) so video finds get a visual without embedding a player.
+function thumb(url: string): string | undefined {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/);
+  return m ? `https://i.ytimg.com/vi/${m[1]}/mqdefault.jpg` : undefined;
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Finds | ${SITE.title}`,
+  url: `${SITE.siteUrl}/finds/`,
+  author: { '@type': 'Person', name: SITE.author, url: `${SITE.siteUrl}/` },
+};
+---
+
+<BaseLayout
+  title="Finds"
+  description="Videos, articles and links Chandan Shakya found interesting on the internet, with a note on why each is worth a look."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <h1>Finds</h1>
+  <p class="meta">Videos, articles and links I found worth sharing.</p>
+
+  {(kinds.length > 1 || tags.length > 0) && (
+    <div class="toolbar">
+      {kinds.length > 1 && (
+        <div class="seg" role="group" aria-label="Filter by type">
+          <button type="button" class="filter-btn" data-kind-filter="all" aria-pressed="true">
+            All <span class="count">{finds.length}</span>
+          </button>
+          {kinds.map((k) => (
+            <button type="button" class="filter-btn" data-kind-filter={k.kind} aria-pressed="false">
+              {kindLabel[k.kind]}s <span class="count">{k.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {tags.length > 0 && (
+        <div class="seg" role="group" aria-label="Filter by tag">
+          <button type="button" class="filter-btn" data-tag-filter="all" aria-pressed="true">Any tag</button>
+          {tags.map((tag) => (
+            <button type="button" class="filter-btn" data-tag-filter={tag} aria-pressed="false">
+              #{tag}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
+
+  {finds.length === 0 && <p class="empty-state">Nothing here yet.</p>}
+
+  <ul class="find-grid" id="find-grid">
+    {finds.map((find) => {
+      const img = thumb(find.data.url);
+      return (
+        <li class="find" data-kind={find.data.kind} data-tags={find.data.tags.join('|')}>
+          <a class="find-link" href={find.data.url} target="_blank" rel="noopener noreferrer">
+            {img && (
+              <span class="find-thumb">
+                <img src={img} width="320" height="180" alt="" loading="lazy" decoding="async" />
+              </span>
+            )}
+            <span class="find-body">
+              <span class="kicker">
+                {kindLabel[find.data.kind]} · {host(find.data.url)} ·
+                <time datetime={find.data.date.toISOString()}>{formatDate(find.data.date)}</time>
+              </span>
+              <strong class="find-title">{find.data.title}</strong>
+              {find.data.note && <span class="note">{find.data.note}</span>}
+            </span>
+          </a>
+          {find.data.tags.length > 0 && (
+            <p class="find-tags">{find.data.tags.map((t) => `#${t}`).join(' ')}</p>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+
+  <p class="empty-state" id="empty-filtered" hidden>No finds match these filters.</p>
+
+  <script is:inline>
+    (function () {
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.find'));
+      var empty = document.getElementById('empty-filtered');
+      var state = { kind: 'all', tag: 'all' };
+
+      function apply() {
+        var shown = 0;
+        cards.forEach(function (card) {
+          var tags = (card.getAttribute('data-tags') || '').split('|');
+          var ok =
+            (state.kind === 'all' || card.getAttribute('data-kind') === state.kind) &&
+            (state.tag === 'all' || tags.indexOf(state.tag) !== -1);
+          card.hidden = !ok;
+          if (ok) shown += 1;
+        });
+        if (empty) empty.hidden = shown !== 0 || cards.length === 0;
+      }
+
+      function bind(attr, key) {
+        var buttons = document.querySelectorAll('[' + attr + ']');
+        buttons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state[key] = btn.getAttribute(attr) || 'all';
+            buttons.forEach(function (b) {
+              b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+            });
+            apply();
+          });
+        });
+      }
+
+      bind('data-kind-filter', 'kind');
+      bind('data-tag-filter', 'tag');
+    })();
+  </script>
+
+  <style>
+    .find-grid {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+      align-items: start;
+    }
+    .find { border: var(--border-width) solid var(--border); box-shadow: var(--shadow); background: var(--bg); }
+    .find[hidden] { display: none; }
+    .find-link { display: block; color: inherit; text-decoration: none; }
+    .find-link:hover .find-title, .find-link:focus-visible .find-title { text-decoration: underline; }
+    .find-thumb { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--code-bg); overflow: hidden; }
+    .find-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .find-thumb::after {
+      content: '▶';
+      position: absolute; inset: 0; margin: auto;
+      width: 2.5rem; height: 2.5rem; line-height: 2.5rem; text-align: center;
+      background: var(--bg); color: var(--fg); border: 2px solid var(--border); font-size: 1rem;
+    }
+    .find-body { display: block; padding: 0.5rem 0.6rem; }
+    .kicker { display: block; color: var(--muted); font-size: 0.75rem; }
+    .find-title { display: block; margin-top: 0.15rem; line-height: 1.3; font-size: 0.95rem; }
+    .note { display: block; margin-top: 0.3rem; color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+    .find-tags { margin: 0; padding: 0 0.6rem 0.5rem; color: var(--muted); font-size: 0.75rem; }
+    .empty-state { color: var(--muted); }
+  </style>
+</BaseLayout>
