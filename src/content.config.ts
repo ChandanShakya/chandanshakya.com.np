@@ -43,7 +43,8 @@ const photos = defineCollection({
     image: image(),
     device: z.string(),
     kind: z.enum(['photo', 'digital-art']),
-    order: z.number().optional(),
+    // Sveltia writes `order: null` when the field is left blank.
+    order: z.number().nullish(),
     date: z.coerce.date(),
     location: z.string().optional(),
     caption: z.string().optional(),

@@ -1,0 +1,27 @@
+---
+import { DISQUS_SHORTNAME } from '../lib/constants';
+---
+
+<hr />
+<h2>Comments</h2>
+<div id="disqus_thread" data-shortname={DISQUS_SHORTNAME}></div>
+<script is:inline>
+  (function () {
+    var thread = document.getElementById('disqus_thread');
+    if (!thread) return;
+    function load() {
+      var s = document.createElement('script');
+      s.src = 'https://' + thread.getAttribute('data-shortname') + '.disqus.com/embed.js';
+      s.async = true;
+      s.setAttribute('data-timestamp', Date.now());
+      document.body.appendChild(s);
+    }
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) { obs.disconnect(); load(); }
+      }, { rootMargin: '400px' });
+      obs.observe(thread);
+    } else { load(); }
+  })();
+</script>
+<noscript>Please enable JavaScript to view comments.</noscript>

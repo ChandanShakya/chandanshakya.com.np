@@ -79,7 +79,7 @@ const jsonLd = {
       const img = thumb(find.data.url);
       return (
         <li class="find" data-kind={find.data.kind} data-tags={find.data.tags.join('|')}>
-          <a class="find-link" href={find.data.url} target="_blank" rel="noopener noreferrer">
+          <a class="find-link" href={`/finds/${find.id}/`}>
             {img && (
               <span class="find-thumb">
                 <img src={img} width="320" height="180" alt="" loading="lazy" decoding="async" />

@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comments from '../../components/Comments.astro';
+import { SITE } from '../../lib/constants';
+import { formatDate } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const finds = await getCollection('finds');
+  return finds.map((find) => ({ params: { slug: find.id }, props: { find } }));
+}
+
+const { find } = Astro.props;
+const { title, url: target, kind, tags, date, note } = find.data;
+const { Content } = await render(find);
+const kindLabel = { video: 'Video', article: 'Article', link: 'Link' }[kind];
+const host = new URL(target).hostname.replace(/^www\./, '');
+const yt = target.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/);
+const thumb = yt ? `https://i.ytimg.com/vi/${yt[1]}/hqdefault.jpg` : undefined;
+const description = (note ?? `${kindLabel} found by ${SITE.author}: ${title}`).replace(/\s+/g, ' ').slice(0, 200);
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: 'Finds', item: `${SITE.siteUrl}/finds/` },
+    { '@type': 'ListItem', position: 3, name: title },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <article>
+    <p><a href="/finds/">← Back to finds</a></p>
+    <h1>{title}</h1>
+    <p class="meta">
+      {kindLabel} · {host} · <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      {tags.length > 0 && ` — ${tags.map((t) => `#${t}`).join(' ')}`}
+    </p>
+
+    <a class="open" href={target} target="_blank" rel="noopener noreferrer">
+      {thumb && (
+        <span class="thumb">
+          <img src={thumb} width="480" height="360" alt="" decoding="async" />
+        </span>
+      )}
+      <span class="btn">{kind === 'video' ? 'Watch' : 'Open'} on {host} ↗</span>
+    </a>
+
+    {note && <p class="note">{note}</p>}
+    <div class="prose"><Content /></div>
+    <footer><Comments /></footer>
+  </article>
+
+  <style>
+    .open { display: inline-block; max-width: 100%; margin: 0.5rem 0 1rem; text-decoration: none; }
+    .thumb { display: block; aspect-ratio: 16 / 9; overflow: hidden; border: var(--border-width) solid var(--border); box-shadow: var(--shadow); background: var(--code-bg); margin-bottom: 1rem; }
+    .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .note { white-space: pre-line; }
+  </style>
+</BaseLayout>
