@@ -8,7 +8,11 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    updated: z.coerce.date().optional(),
+    // Sveltia writes `updated: ''` when the field is left blank.
+    updated: z.preprocess(
+      (v) => (v === '' || v === null ? undefined : v),
+      z.coerce.date().optional()
+    ),
     tags: z.array(z.string()),
   }),
 });
@@ -19,7 +23,11 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    updated: z.coerce.date().optional(),
+    // Sveltia writes `updated: ''` when the field is left blank.
+    updated: z.preprocess(
+      (v) => (v === '' || v === null ? undefined : v),
+      z.coerce.date().optional()
+    ),
     category: z.string(),
     link: z.string(),
     live: z.array(z.object({ label: z.string(), url: z.string().url() })).optional(),

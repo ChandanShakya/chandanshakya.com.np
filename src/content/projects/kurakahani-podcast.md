@@ -4,7 +4,6 @@ description: |-
   Converts Kurakahani YouTube videos to podcast RSS feed with website archiving
   Extraction, RSS Feed Generation, Website Hosting and Archiving
 date: 2023-09-17
-updated: ''
 category: Jekyll, podcast, RSS
 link: https://github.com/Kurakahani/kurakahani.github.io
 live:
