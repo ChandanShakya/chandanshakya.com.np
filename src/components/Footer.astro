@@ -11,12 +11,9 @@ const finds = await getCollection('finds');
 <footer class="site-footer">
   <div class="wrap">
     <p>Kathmandu, Nepal — {SITE.author}</p>
-    <p>
-      {SOCIAL_LINKS.map((link, i) => (
-        <>
-          <a href={link.url} target="_blank" rel="noopener noreferrer">{link.title}</a>
-          {i < SOCIAL_LINKS.length - 1 ? ' · ' : ''}
-        </>
+    <p class="social-row">
+      {SOCIAL_LINKS.map((link) => (
+        <a href={link.url} target="_blank" rel="noopener noreferrer">{link.title}</a>
       ))}
     </p>
     <p class="meta">

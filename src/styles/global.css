@@ -77,6 +77,7 @@ h1, h2, h3, h4 {
   line-height: 1.25;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  text-align: left;
 }
 
 .card { border: var(--border-width) solid var(--border); box-shadow: var(--shadow); padding: 1.25rem 1.25rem 1.4rem; margin: 2rem 0; }
@@ -154,27 +155,31 @@ button:hover, .btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0
 }
 
 /* Filter buttons (projects page, tiny progressive-enhancement JS) */
-.filter-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0 1rem; }
-.filter-btn { background: var(--bg); color: var(--fg); padding: 0.15rem 0.5rem; font-size: 0.75rem; box-shadow: 2px 2px 0 var(--border); }
+.filter-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0 1rem; }
+.filter-btn { background: var(--bg); color: var(--fg); padding: 0.35rem 0.6rem; min-height: 2.25rem; min-width: 2.25rem; font-size: 0.75rem; box-shadow: 2px 2px 0 var(--border); }
 .filter-btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 /* Compact filter toolbar (photography, finds) */
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; margin: 0.5rem 0 1rem; }
 .seg { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-.toolbar .filter-btn { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.5rem; font-size: 0.75rem; }
+.toolbar .filter-btn { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.6rem; font-size: 0.75rem; }
 .count { color: var(--muted); font-weight: 400; }
 .filter-btn[aria-pressed="true"] .count { color: inherit; }
 
 /* Prose */
 .prose { max-width: 100%; overflow-wrap: break-word; }
-.prose pre { border: 2px solid var(--border); background: var(--code-bg); padding: 1rem; overflow: auto; font-size: 0.9rem; }
-.prose code { font-family: var(--font-mono); font-size: 0.9em; background: var(--code-bg); padding: 0.1em 0.3em; }
-.prose pre code { background: none; padding: 0; }
+.prose pre { border: 2px solid var(--border); background: var(--code-bg); padding: 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; font-size: 0.9rem; }
+.prose code { font-family: var(--font-mono); font-size: 0.9em; background: var(--code-bg); padding: 0.1em 0.3em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.prose pre code { background: none; padding: 0; white-space: pre; overflow-wrap: normal; word-break: normal; }
 /* Shiki dual theme: follow the data-theme toggle (inline light colors need !important) */
 html[data-theme="dark"] .astro-code { background-color: var(--shiki-dark-bg) !important; color: var(--shiki-dark) !important; }
 html[data-theme="dark"] .astro-code span { color: var(--shiki-dark) !important; }
 .prose blockquote { border-left: 4px solid var(--border); margin-left: 0; padding-left: 1rem; color: var(--muted); }
-.prose table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
-.prose th, .prose td { border: 2px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+.prose table { border-collapse: collapse; width: 100%; max-width: 100%; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.prose th, .prose td { border: 2px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; overflow-wrap: break-word; }
+@media (max-width: 560px) {
+  .prose table { font-size: 0.85rem; }
+  .prose th, .prose td { padding: 0.3rem 0.45rem; }
+}
 .prose th { background: var(--panel); }
 
 /* Footer */
@@ -185,8 +190,20 @@ html[data-theme="dark"] .astro-code span { color: var(--shiki-dark) !important; 
 ul.plain li:has(> .commit-badge) {
   display: flex;
   align-items: baseline;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   column-gap: 0.5rem;
+}
+ul.plain li:has(> .commit-badge) > a {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+ul.plain li:has(> .commit-badge) > .meta {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+ul.plain li:has(> .commit-badge) > .commit-badge {
+  flex: 0 0 auto;
+  margin-left: 0;
 }
 ul.plain li:has(> .commit-badge) > .meta + .commit-badge {
   margin-left: auto;
@@ -204,3 +221,6 @@ ul.plain li:has(> .commit-badge) > .meta + .commit-badge {
 #contact form p:has(> button[type="submit"]) {
   text-align: right;
 }
+
+/* Footer social links: flex row so wrapping never leaves a stray separator */
+.social-row { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }

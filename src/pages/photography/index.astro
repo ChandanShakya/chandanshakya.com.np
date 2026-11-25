@@ -113,7 +113,8 @@ const jsonLd = {
                 />
               )}
               <span>{deviceById.get(photo.data.device)?.name ?? photo.data.device}</span>
-              <span>· {photo.data.location ? `${photo.data.location} · ` : ''}<time datetime={photo.data.date.toISOString()}>{photo.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time></span>
+              {photo.data.location && <span>{photo.data.location}</span>}
+              <span><time datetime={photo.data.date.toISOString()}>{photo.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time></span>
             </span>
             {photo.data.caption && <span class="caption">{photo.data.caption}</span>}
           </figcaption>
@@ -290,5 +291,13 @@ const jsonLd = {
     }
     .sentinel { height: 1px; }
     .sentinel[hidden] { display: none; }
+    .photo-card .meta > span { white-space: nowrap; }
+    .photo-card .meta > span + span::before { content: "· "; }
+    @media (max-width: 560px) {
+      .photo-card figcaption strong { white-space: normal; overflow: visible; text-overflow: clip; }
+    }
+    @media (hover: none) {
+      .caption { display: block; }
+    }
   </style>
 </BaseLayout>

@@ -725,6 +725,11 @@ if (hasHistory) {
   .legend-btn[aria-pressed="false"] { opacity: 0.45; }
   .legend-btn[aria-pressed="false"] .legend-swatch { background: transparent; }
 
+  @media (max-width: 560px) {
+    .legend-label { white-space: normal; overflow: visible; text-overflow: clip; }
+    .bar-name { white-space: normal; overflow: visible; text-overflow: clip; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .bar-fill, .area-wrap { transition: none; }
     .in-view .bar-fill { width: var(--w); }
