@@ -7,6 +7,8 @@ import { SITE } from '../lib/constants';
 
 const blogPosts = sortDesc(await getCollection('blog'), (p) => p.data.date.valueOf());
 const projects = sortDesc(await getCollection('projects'), (p) => p.data.date.valueOf());
+const photos = sortDesc(await getCollection('photos'), (p) => p.data.date.valueOf());
+const finds = sortDesc(await getCollection('finds'), (p) => p.data.date.valueOf());
 
 const byYear = <T extends { data: { date: Date } }>(items: T[]) => {
   const groups: Record<string, T[]> = {};
@@ -15,12 +17,14 @@ const byYear = <T extends { data: { date: Date } }>(items: T[]) => {
 };
 const blogByYear = byYear(blogPosts);
 const projectsByYear = byYear(projects);
+const photosByYear = byYear(photos);
+const findsByYear = byYear(finds);
 
-const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsByYear)])].sort().reverse();
+const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsByYear), ...Object.keys(photosByYear), ...Object.keys(findsByYear)])].sort().reverse();
 ---
 
-<BaseLayout title="Archive" description={`Archive of all posts and projects by ${SITE.author}`}>
-  <PageHead title="Archive" meta={`${blogPosts.length} posts · ${projects.length} projects`} />
+<BaseLayout title="Archive" description={`Archive of all posts, projects, photos and finds by ${SITE.author}`}>
+  <PageHead title="Archive" meta={`${blogPosts.length} posts · ${projects.length} projects · ${photos.length} photos · ${finds.length} finds`} />
   {years.map((year, i) => (
     <section>
       {i > 0 && <hr />}
@@ -28,6 +32,8 @@ const years = [...new Set([...Object.keys(blogByYear), ...Object.keys(projectsBy
       {[
         { label: 'Blog posts', base: 'blog', items: blogByYear[year] },
         { label: 'Projects', base: 'projects', items: projectsByYear[year] },
+        { label: 'Photos', base: 'photography', items: photosByYear[year] },
+        { label: 'Finds', base: 'finds', items: findsByYear[year] },
       ].filter((s) => s.items).map((s) => (
         <>
           <h3>{s.label}</h3>
