@@ -6,4 +6,7 @@ category: "TypeScript, Genealogy"
 link: "https://github.com/ChandanShakya/family-tree"
 client: "Public"
 commits: 19
+live:
+  - label: "Live site"
+    url: "https://family.chandanshakya.com.np"
 ---

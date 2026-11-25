@@ -6,4 +6,9 @@ category: "PHP, Laravel"
 link: "https://github.com/NCCSSoftware/cas"
 client: "NCCS"
 commits: 2405
+live:
+  - label: "Chandol"
+    url: "https://portal.nccs.edu.np/"
+  - label: "+2 Paknajol"
+    url: "https://portal.nccs.edu.np:82/"
 ---

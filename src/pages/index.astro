@@ -14,6 +14,7 @@ import { join } from 'node:path';
 
 const allProjects = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0);
 const featured = allProjects.slice(0, 6);
+const liveProjects = allProjects.filter((p) => p.data.live?.length);
 const chartData = allProjects.map((p) => ({
   id: p.id,
   title: p.data.title,
@@ -81,6 +82,28 @@ const jsonLd = {
     </ul>
     <p><a href="/projects/">View all projects →</a></p>
   </section>
+
+  {liveProjects.length > 0 && (
+    <>
+      <hr />
+
+      <section>
+        <h2>Live projects</h2>
+        <p class="meta">Working sites you can open and use right now</p>
+        <ul class="plain">
+          {liveProjects.map((project) => (
+            <li>
+              <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+              <span class="meta">{' '}— {project.data.category}</span>
+              {project.data.live?.map((l) => (
+                <span class="commit-badge"><a href={l.url} target="_blank" rel="noopener">{l.label} ↗</a></span>
+              ))}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
+  )}
 
   <hr />
 

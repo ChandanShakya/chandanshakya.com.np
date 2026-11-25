@@ -22,6 +22,7 @@ const projects = defineCollection({
     updated: z.coerce.date().optional(),
     category: z.string(),
     link: z.string(),
+    live: z.array(z.object({ label: z.string(), url: z.string().url() })).optional(),
     client: z.string(),
     commits: z.number(),
   }),

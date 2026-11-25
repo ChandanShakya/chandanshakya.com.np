@@ -38,6 +38,13 @@ collections:
       - { name: updated, label: Updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false }
       - { name: category, label: Category, widget: string }
       - { name: link, label: Link, widget: string }
+      - name: live
+        label: Live links
+        widget: list
+        required: false
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: url, label: URL, widget: string }
       - { name: client, label: Client, widget: string }
       - { name: commits, label: Commits, widget: number, value_type: int }
       - { name: body, label: Body, widget: markdown }

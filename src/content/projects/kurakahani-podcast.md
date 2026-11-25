@@ -6,4 +6,7 @@ category: "Jekyll, podcast, RSS"
 link: "https://github.com/Kurakahani/kurakahani.github.io"
 client: "Public"
 commits: 110
+live:
+  - label: "Live site"
+    url: "https://kurakahani.github.io"
 ---

@@ -6,4 +6,7 @@ category: "Kotlin, scraping"
 link: "https://github.com/ChandanShakya/goldmandu"
 client: "Public"
 commits: 853
+live:
+  - label: "Live site"
+    url: "https://goldmandu.chandanshakya.com.np"
 ---

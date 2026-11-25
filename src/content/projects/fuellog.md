@@ -6,4 +6,7 @@ category: "Kotlin, Android"
 link: "https://github.com/ChandanShakya/FuelLog"
 client: "Public"
 commits: 138
+live:
+  - label: "Live site"
+    url: "https://fuellog.chandanshakya.com.np"
 ---

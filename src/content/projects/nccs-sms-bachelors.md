@@ -6,4 +6,7 @@ category: "PHP, Laravel"
 link: "https://github.com/NCCSSoftware/sms-bachelors"
 client: "NCCS"
 commits: 2070
+live:
+  - label: "Live site"
+    url: "https://portal.nccs.edu.np:85/"
 ---

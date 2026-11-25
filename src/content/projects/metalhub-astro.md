@@ -6,4 +6,7 @@ category: "Astro"
 link: "https://github.com/ChandanShakya/metalhub-astro"
 client: "Public"
 commits: 80
+live:
+  - label: "Live site"
+    url: "https://metalhub.com.np"
 ---

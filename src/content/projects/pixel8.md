@@ -6,4 +6,7 @@ category: "HTML, CSS, JavaScript"
 link: "https://github.com/ChandanShakya/Pixel8"
 client: "Public"
 commits: 7
+live:
+  - label: "Live site"
+    url: "https://pixel8.chandanshakya.com.np"
 ---
