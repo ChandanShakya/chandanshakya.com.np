@@ -181,7 +181,8 @@ const jsonLd = {
     .find-title { overflow-wrap: anywhere; }
     .find-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0; padding: 0 0.6rem 0.5rem; }
     .find-tags { color: var(--muted); font-size: 0.75rem; }
-    .find-ext { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+    .find-ext { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; text-decoration: none; background: var(--fg); color: var(--bg); border: 2px solid var(--border); box-shadow: 2px 2px 0 var(--border); padding: 0.25rem 0.6rem; }
+    .find-ext:visited { color: var(--bg); }
     .empty-state { color: var(--muted); }
   </style>
 </BaseLayout>

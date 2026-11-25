@@ -180,3 +180,27 @@ html[data-theme="dark"] .astro-code span { color: var(--shiki-dark) !important; 
 /* Footer */
 .site-footer { border-top: var(--border-width) solid var(--border); margin-top: 2rem; }
 .site-footer .wrap { padding-top: 1.5rem; padding-bottom: 2rem; }
+
+/* Right-align badges in project lists (commit counts, live links) */
+ul.plain li:has(> .commit-badge) {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+}
+ul.plain li:has(> .commit-badge) > .meta + .commit-badge {
+  margin-left: auto;
+}
+
+/* Hero buttons right-aligned */
+.hero p:has(> .btn) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Contact form send button right-aligned */
+#contact form p:has(> button[type="submit"]) {
+  text-align: right;
+}

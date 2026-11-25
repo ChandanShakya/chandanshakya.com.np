@@ -4,6 +4,8 @@ import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects');
 const posts = await getCollection('blog');
+const photos = await getCollection('photos');
+const finds = await getCollection('finds');
 ---
 
 <footer class="site-footer">
@@ -18,7 +20,7 @@ const posts = await getCollection('blog');
       ))}
     </p>
     <p class="meta">
-      {projects.length} projects · {posts.length} blogs · © {SITE.author} {new Date().getFullYear()}
+      {projects.length} projects · {posts.length} blogs · {photos.length} photos · {finds.length} finds · © {SITE.author} {new Date().getFullYear()}
     </p>
     <p class="meta">
       <a href="/rss.xml">RSS</a> · <a href="/sitemap-index.xml">Sitemap</a>
