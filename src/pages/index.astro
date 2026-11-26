@@ -7,7 +7,7 @@ import About from '../components/About.astro';
 import ContactForm from '../components/ContactForm.astro';
 import CommitsChart from '../components/CommitsChart.astro';
 import { getCollection } from 'astro:content';
-import { sortDesc } from '../lib/utils';
+import { formatDate, sortDesc } from '../lib/utils';
 import { SITE } from '../lib/constants';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -15,6 +15,7 @@ import { join } from 'node:path';
 const allProjects = sortDesc(await getCollection('projects'), (p) => p.data.commits || 0);
 const featured = allProjects.slice(0, 6);
 const liveProjects = allProjects.filter((p) => p.data.live?.length);
+const latestPosts = sortDesc(await getCollection('blog'), (post) => post.data.date.valueOf()).slice(0, 3);
 const chartData = allProjects.map((p) => ({
   id: p.id,
   title: p.data.title,
@@ -68,6 +69,12 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <Header />
 
+  <hr />
+
+  <About />
+
+  <hr />
+
   <section>
     <h2>Featured projects</h2>
     <p class="meta">Top projects by commit activity</p>
@@ -107,11 +114,23 @@ const jsonLd = {
 
   <hr />
 
-  <CommitsChart projects={chartData} history={commitHistory} />
+  <section>
+    <h2>Latest writing</h2>
+    <p class="meta">Recent posts from the blog</p>
+    <ul class="plain">
+      {latestPosts.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          <span class="meta">{' '}— <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></span>
+        </li>
+      ))}
+    </ul>
+    <p><a href="/blog/">Read the blog →</a></p>
+  </section>
 
   <hr />
 
-  <About />
+  <CommitsChart projects={chartData} history={commitHistory} />
 
   <hr />
 
