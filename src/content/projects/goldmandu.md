@@ -5,7 +5,7 @@ date: 2022-05-20
 category: "Kotlin, scraping"
 link: "https://github.com/ChandanShakya/goldmandu"
 client: "Public"
-commits: 853
+commits: 855
 live:
   - label: "Live site"
     url: "https://goldmandu.chandanshakya.com.np"

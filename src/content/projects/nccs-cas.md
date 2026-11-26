@@ -5,7 +5,7 @@ date: 2024-06-21
 category: "PHP, Laravel"
 link: "https://github.com/NCCSSoftware/cas"
 client: "NCCS"
-commits: 2405
+commits: 2408
 live:
   - label: "Chandol"
     url: "https://portal.nccs.edu.np/"
